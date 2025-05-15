@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 const productVariantSchema = new mongoose.Schema(
     {
         product_id: {
