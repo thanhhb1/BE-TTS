@@ -4,9 +4,10 @@ import connectDB from "./src/configs/db.js";
 import notFoundHandler from "./src/middlewares/notFoundHandler.js";
 import errorHandler from "./src/middlewares/errorHandler.js";
 import cors from "cors";
-import { PORT } from "./src/configs/enviroments.js";
+import { PORT } from "./src/configs/environments.js";
 import jsonValid from "./src/middlewares/jsonInvalid.js";
 import setupSwagger from "./src/configs/swaggerConfig.js";
+
 
 const app = express();
 app.use(express.json());
