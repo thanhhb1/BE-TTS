@@ -1,20 +1,34 @@
 import Category from "../models/Category.js";
-
+import { successResponse, errorResponse } from "../utils/response.js";
 
 export const getAll = async (req, res) => {
   try {
-    const categories = await Category.find({ isDeleted: false });
+    const { _limit = 10, _page = 1, _sort = "createdAt", _order = "desc", q = "" } = req.query;
+
+    const query = {
+      isDeleted: false,
+      name: { $regex: q, $options: "i" },
+    };
+
+    const totalItems = await Category.countDocuments(query);
+    const categories = await Category.find(query)
+      .sort({ [_sort]: _order === "asc" ? 1 : -1 })
+      .skip((_page - 1) * _limit)
+      .limit(Number(_limit));
+
     if (!categories.length) {
-      return res.status(404).json({ message: "Không tìm thấy danh mục nào" });
+      return errorResponse(res, "Không tìm thấy danh mục nào", 404);
     }
-    return res.status(200).json({
-      message: "Lấy danh sách danh mục thành công",
-      datas: categories,
-    });
+
+    return successResponse(res, {
+      categories,
+      pagination: {
+        _limit: Number(_limit),
+        _page: Number(_page),
+        _total: totalItems,
+      },
+    }, "Lấy danh sách danh mục thành công");
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return errorResponse(res, error.message, 500);
   }
 };
-
-
-
