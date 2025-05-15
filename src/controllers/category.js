@@ -1,5 +1,6 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
+import { categoryValid } from "../validation/category.js";
 import { successResponse, errorResponse } from "../utils/response.js";
 
 export const getCategories = async (req, res) => {
@@ -46,6 +47,43 @@ export const getById = async (req, res) => {
     } catch (error) {
         return errorResponse(res, error.message);
     }
+};
+
+export const create = async (req, res) => {
+  try {
+    const { error } = categoryValid.validate(req.body);
+    if (error) {
+      return validationError(res, error.details[0].message);
+    }
+
+    const newCategory = await Category.create(req.body);
+    return successResponse(res, newCategory, "Thêm danh mục thành công", 201);
+  } catch (error) {
+    return errorResponse(res, error.message);
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const { error } = categoryValid.validate(req.body);
+    if (error) {
+      return validationError(res, error.details[0].message);
+    }
+
+    const updatedCategory = await Category.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: false },
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedCategory) {
+      return errorResponse(res, "Không tìm thấy danh mục để cập nhật", 404);
+    }
+
+    return successResponse(res, updatedCategory, "Cập nhật danh mục thành công");
+  } catch (error) {
+    return errorResponse(res, error.message);
+  }
 };
 
 const DEFAULT_CATEGORY_NAME = "Không xác định";
