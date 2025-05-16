@@ -21,7 +21,16 @@ export const getCategories = async (req, res) => {
         if (!categories.length) {
             return errorResponse(res, "Không tìm thấy danh mục nào");
         }
-
+      //Lấy sản phẩm cho từng danh mục
+        const categoriesWithProducts = await Promise.all(
+            categories.map(async (category) => {
+                const products = await Product.find({ category_id: category._id });
+                return {
+                    ...category.toObject(),
+                    products
+                };
+            })
+        );
         return successResponse(res, {
             categories,
             pagination: {

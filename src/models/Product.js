@@ -3,7 +3,8 @@ const productSchema = new mongoose.Schema(
     {
         category_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category'
+            ref: 'Category',
+            required: true
         },
         name: {
             type: String,
@@ -16,7 +17,8 @@ const productSchema = new mongoose.Schema(
             type: String
         },
         images: [{
-            type: String
+            type: String,
+            required:true
         }],
         size: {
             type: String
@@ -29,13 +31,17 @@ const productSchema = new mongoose.Schema(
         },
         stock_quantity: {
             type: Number,
-            default: 0
+            default: 0,
+            min: 0
         },
         price: {
-            type: Number
+            type: Number,
+            required:true,
+            min: 0
         },
         discount_price: {
-            type: Number
+            type: Number,
+            min: 0
         },
         variation_status: {
             type: Boolean, default: false
