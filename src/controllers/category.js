@@ -1,7 +1,7 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 import { categoryValid } from "../validation/category.js";
-import { successResponse, errorResponse } from "../utils/response.js";
+import { successResponse, errorResponse,validationError } from "../utils/response.js";
 
 export const getCategories = async (req, res) => {
     try {
@@ -19,7 +19,7 @@ export const getCategories = async (req, res) => {
             .limit(Number(_limit));
 
         if (!categories.length) {
-            return errorResponse(res, "Không tìm thấy danh mục nào", 404);
+            return errorResponse(res, "Không tìm thấy danh mục nào");
         }
 
         return successResponse(res, {
@@ -40,10 +40,10 @@ export const getById = async (req, res) => {
         const category = await Category.findOne({ _id: req.params.id, isDeleted: false });
 
         if (!category) {
-            return successResponse(res, null, "Danh mục không tồn tại", 404);
+            return successResponse(res, null, "Danh mục không tồn tại");
         }
 
-        return successResponse(res, category, "Lấy danh mục thành công", 200);
+        return successResponse(res, category, "Lấy danh mục thành công");
     } catch (error) {
         return errorResponse(res, error.message);
     }
@@ -57,7 +57,7 @@ export const create = async (req, res) => {
     }
 
     const newCategory = await Category.create(req.body);
-    return successResponse(res, newCategory, "Thêm danh mục thành công", 201);
+    return successResponse(res, newCategory, "Thêm danh mục thành công");
   } catch (error) {
     return errorResponse(res, error.message);
   }
@@ -77,7 +77,7 @@ export const update = async (req, res) => {
     );
 
     if (!updatedCategory) {
-      return errorResponse(res, "Không tìm thấy danh mục để cập nhật", 404);
+      return errorResponse(res, "Không tìm thấy danh mục để cập nhật");
     }
 
     return successResponse(res, updatedCategory, "Cập nhật danh mục thành công");
@@ -101,13 +101,13 @@ export const remove = async (req, res) => {
         const defaultCategory = await getDefaultCategory();
 
         if (req.params.id === defaultCategory._id.toString()) {
-            return errorResponse(res, "Không thể xóa danh mục mặc định", 400);
+            return errorResponse(res, "Không thể xóa danh mục mặc định");
         }
 
 
         const categoryToDelete = await Category.findOne({ _id: req.params.id, isDeleted: false });
         if (!categoryToDelete) {
-            return errorResponse(res, "Không tìm thấy danh mục để xóa mềm", 404);
+            return errorResponse(res, "Không tìm thấy danh mục để xóa mềm");
         }
 
 
@@ -131,7 +131,7 @@ export const restore = async (req, res) => {
         const defaultCategory = await getDefaultCategory();
 
         if (req.params.id === defaultCategory._id.toString()) {
-            return errorResponse(res, "Không thể khôi phục danh mục mặc định", 400);
+            return errorResponse(res, "Không thể khôi phục danh mục mặc định");
         }
 
         const restoredCategory = await Category.findOneAndUpdate(
@@ -141,7 +141,7 @@ export const restore = async (req, res) => {
         );
 
         if (!restoredCategory) {
-            return errorResponse(res, "Không tìm thấy danh mục để khôi phục", 404);
+            return errorResponse(res, "Không tìm thấy danh mục để khôi phục");
         }
 
 
@@ -162,13 +162,13 @@ export const permanentlyRemove = async (req, res) => {
         const defaultCategory = await getDefaultCategory();
 
         if (req.params.id === defaultCategory._id.toString()) {
-            return errorResponse(res, "Không thể xóa vĩnh viễn danh mục mặc định", 400);
+            return errorResponse(res, "Không thể xóa vĩnh viễn danh mục mặc định");
         }
 
         const deletedCategory = await Category.findByIdAndDelete(req.params.id);
 
         if (!deletedCategory) {
-            return errorResponse(res, "Không tìm thấy danh mục để xóa vĩnh viễn", 404);
+            return errorResponse(res, "Không tìm thấy danh mục để xóa vĩnh viễn");
         }
 
         return successResponse(res, deletedCategory, "Xóa vĩnh viễn danh mục thành công");
