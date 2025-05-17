@@ -1,7 +1,7 @@
-import Category from "../../models/Category.js";
-import Product from "../../models/Product.js";
-import { categoryValid } from "../../validation/category.js";
-import { successResponse, errorResponse,validationError } from "../../utils/response.js";
+import Category from "../models/Category.js";
+import Product from "../models/Product.js";
+import { categoryValid } from "../validation/category.js";
+import { successResponse, errorResponse,validationError } from "../utils/response.js";
 
 export const getCategories = async (req, res) => {
     try {
