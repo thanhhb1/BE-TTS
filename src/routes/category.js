@@ -8,7 +8,7 @@ import {
   restore,
   permanentlyRemove,
   
-} from "../../controllers/admin/category.js";
+} from "../controllers/category.js";
 
 const routerCategory = express.Router();
 
