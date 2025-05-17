@@ -1,10 +1,21 @@
 import express from 'express';
-import adminRoutes from './admin/index.js';
-// import clientRoutes from './client/index.js';  
+import routerCategory from './category.js'; 
+import routerUser from './user.js'; 
+import routerProduct from './product.js';
+// import routerAuth from './auth.js';
 
 const router = express.Router();
 
-router.use('/admin', adminRoutes);
-// router.use('/client', clientRoutes);
+
+router.use('/categories', routerCategory);
+router.use('/users', routerUser);
+router.use('/products', routerProduct);
+
+// import routerAuth from './auth.js';
+
+
+// router.use('/auth', routerAuth);
+
+
 
 export default router;

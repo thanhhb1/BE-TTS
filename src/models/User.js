@@ -3,12 +3,14 @@ const userSchema = new mongoose.Schema(
     {
         fullname: {
             type: String,
-            required: true
+            required: true,
+        
         },
         email: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            match: [/^\S+@\S+\.\S+$/]
         },
         password: {
             type: String,
@@ -19,7 +21,10 @@ const userSchema = new mongoose.Schema(
         },
         role_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Role'
+            ref: 'Role',
+            required: true,
+            default: new mongoose.Types.ObjectId("68275b403168c2252f45af62")
+
         },
         contact_subject: {
             type: String
