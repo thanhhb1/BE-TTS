@@ -1,14 +1,10 @@
 import express from 'express';
-import routerCategory from './category.js'; 
-import routerProduct from './product.js';
-// import routerAuth from './auth.js';
+import adminRoutes from './admin/index.js';
+// import clientRoutes from './client/index.js';  
 
 const router = express.Router();
 
-
-router.use('/categories', routerCategory);
-router.use('/products', routerProduct);
-
-
+router.use('/admin', adminRoutes);
+// router.use('/client', clientRoutes);
 
 export default router;
