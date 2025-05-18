@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Role',
             required: true,
-            default: new mongoose.Types.ObjectId("68275b403168c2252f45af62")
+            default: new mongoose.Types.ObjectId("68298bbac47d4718e12fe1cd")
 
         },
         contact_subject: {
