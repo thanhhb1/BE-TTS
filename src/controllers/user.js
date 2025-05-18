@@ -63,5 +63,42 @@ export const create = async (req, res) => {
   }
 };
 
+export const hide = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { status: false },
+      { new: true }
+    );
+
+    if (!user) {
+      return successResponse(res, null, "Tài khoản không tồn tại");
+    }
+
+    return successResponse(res, user, "Đã ẩn tài khoản thành công");
+  } catch (error) {
+    return errorResponse(res, error.message);
+  }
+};
+
+export const unHide = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { status: true },
+      { new: true }
+    );
+
+    if (!user) {
+      return successResponse(res, null, "Tài khoản không tồn tại");
+    }
+
+    return successResponse(res, user, "Bỏ ẩn tài khoản thành công");
+  } catch (error) {
+    return errorResponse(res, error.message);
+  }
+};
+
+
 
 
