@@ -5,999 +5,242 @@
 		"title": "REST API",
 		"description": ""
 	},
-	"host": "localhost:8888/api",
+	"host": "localhost:8000/api",
 	"basePath": "/",
-	"schemes": ["http"],
+	"schemes": [
+		"http"
+	],
 	"paths": {
-		"/brands/": {
+		"/users/": {
 			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
-					}
-				],
+				"summary": "Lấy danh sách người dùng",
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Danh sách người dùng"
 					}
 				}
 			},
 			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"title": {
-									"example": "any"
-								}
+				"summary": "Tạo người dùng mới",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string",
+										"example": "user@example.com"
+									},
+									"password": {
+										"type": "string",
+										"example": "123456"
+									}
+								},
+								"required": [
+									"email",
+									"password"
+								]
 							}
 						}
 					}
-				],
+				},
 				"responses": {
 					"201": {
-						"description": "Created"
+						"description": "Tạo người dùng thành công"
 					}
 				}
 			}
 		},
-		"/brands/{id}": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			},
+		"/users/{id}/hide": {
 			"patch": {
-				"description": "",
+				"summary": "Ẩn người dùng (xóa mềm)",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "body",
-						"in": "body",
 						"schema": {
-							"type": "object",
-							"properties": {
-								"title": {
-									"example": "any"
-								}
-							}
+							"type": "string"
 						}
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
+						"description": "Ẩn người dùng thành công"
 					}
 				}
 			}
 		},
-		"/brands/soft-delete/{id}": {
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/brands/restore/{id}": {
+		"/users/{id}/unhide": {
 			"patch": {
-				"description": "",
+				"summary": "Bỏ ẩn người dùng",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Bỏ ẩn người dùng thành công"
 					}
 				}
 			}
 		},
 		"/categories/": {
 			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
-					}
-				],
+				"summary": "Lấy danh sách danh mục",
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Danh sách danh mục"
 					}
 				}
 			},
 			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"title": {
-									"example": "any"
-								}
+				"summary": "Tạo danh mục mới",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string",
+										"example": "Danh mục mới"
+									}
+								},
+								"required": [
+									"title"
+								]
 							}
 						}
 					}
-				],
+				},
 				"responses": {
 					"201": {
-						"description": "Created"
+						"description": "Tạo danh mục thành công"
 					}
 				}
 			}
 		},
 		"/categories/{id}": {
 			"get": {
-				"description": "",
+				"summary": "Lấy chi tiết danh mục theo ID",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Chi tiết danh mục"
 					}
 				}
 			},
-			"patch": {
-				"description": "",
+			"put": {
+				"summary": "Cập nhật danh mục theo ID",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"title": {
+										"type": "string",
+										"example": "Danh mục cập nhật"
+									}
+								},
+								"required": [
+									"title"
+								]
+							}
+						}
+					}
+				},
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Cập nhật danh mục thành công"
 					}
 				}
 			},
 			"delete": {
-				"description": "",
+				"summary": "Xóa mềm danh mục theo ID",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
+						"schema": {
+							"type": "string"
+						}
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/categories/soft-delete/{id}": {
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
+						"description": "Xóa mềm danh mục thành công"
 					}
 				}
 			}
 		},
 		"/categories/restore/{id}": {
 			"patch": {
-				"description": "",
+				"summary": "Khôi phục danh mục đã xóa mềm",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/sub-categories/": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
 						"schema": {
-							"type": "object",
-							"properties": {
-								"categoryId": {
-									"example": "any"
-								},
-								"title": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "Created"
-					}
-				}
-			}
-		},
-		"/sub-categories/{id}": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"title": {
-									"example": "any"
-								},
-								"categoryId": {
-									"example": "any"
-								}
-							}
+							"type": "string"
 						}
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "Khôi phục danh mục thành công"
 					}
 				}
-			},
+			}
+		},
+		"/categories/forcedelete/{id}": {
 			"delete": {
-				"description": "",
+				"summary": "Xóa cứng danh mục theo ID",
 				"parameters": [
 					{
 						"name": "id",
 						"in": "path",
 						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/sub-categories/soft-delete/{id}": {
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/sub-categories/restore/{id}": {
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/products/": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
 						"schema": {
-							"type": "object",
-							"properties": {
-								"title": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "Created"
-					}
-				}
-			}
-		},
-		"/products/{id}": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "includeDeleted",
-						"in": "query",
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/products/soft-delete/{id}": {
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/products/restore/{id}": {
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/variants/{productId}": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "productId",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/variants/": {
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"productId": {
-									"example": "any"
-								},
-								"attributes": {
-									"example": "any"
-								},
-								"price": {
-									"example": "any"
-								},
-								"stock": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "Created"
-					}
-				}
-			}
-		},
-		"/variants/{id}": {
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"productId": {
-									"example": "any"
-								},
-								"attributes": {
-									"example": "any"
-								}
-							}
+							"type": "string"
 						}
 					}
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
-					}
-				}
-			},
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/variants/soft-delete/{id}": {
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/variants/restore/{id}": {
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/attributes/": {
-			"get": {
-				"description": "",
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			},
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"name": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "Created"
-					},
-					"400": {
-						"description": "Bad Request"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			}
-		},
-		"/attributes/{id}": {
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"404": {
-						"description": "Not Found"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			},
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"404": {
-						"description": "Not Found"
-					}
-				}
-			}
-		},
-		"/attribute-values/": {
-			"get": {
-				"description": "",
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			},
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"attributeId": {
-									"example": "any"
-								},
-								"value": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "Created"
-					},
-					"400": {
-						"description": "Bad Request"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			}
-		},
-		"/attribute-values/{id}": {
-			"patch": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"value": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"404": {
-						"description": "Not Found"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			},
-			"delete": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					},
-					"404": {
-						"description": "Not Found"
-					},
-					"500": {
-						"description": "Internal Server Error"
-					}
-				}
-			}
-		},
-		"/auth/register": {
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"email": {
-									"example": "any"
-								},
-								"password": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "Created"
-					}
-				}
-			}
-		},
-		"/auth/login": {
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"email": {
-									"example": "any"
-								},
-								"password": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/auth/logout": {
-			"post": {
-				"description": "",
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/auth/refresh-token": {
-			"post": {
-				"description": "",
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/auth/forgot-password": {
-			"post": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "body",
-						"in": "body",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"email": {
-									"example": "any"
-								}
-							}
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/auth/reset-password/{resetToken}": {
-			"get": {
-				"description": "",
-				"parameters": [
-					{
-						"name": "resetToken",
-						"in": "path",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				}
-			}
-		},
-		"/auth/profile": {
-			"get": {
-				"description": "",
-				"responses": {
-					"200": {
-						"description": "OK"
+						"description": "Xóa cứng danh mục thành công"
 					}
 				}
 			}
