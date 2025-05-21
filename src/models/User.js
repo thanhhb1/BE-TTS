@@ -1,42 +1,44 @@
 import mongoose from 'mongoose';
+
 const userSchema = new mongoose.Schema(
     {
         fullname: {
             type: String,
             required: true,
-        
         },
         email: {
             type: String,
             required: true,
             unique: true,
-            match: [/^\S+@\S+\.\S+$/]
+            match: [/^\S+@[a-zA-Z]+[a-zA-Z0-9.-]*\.[a-z]{2,}$/]
         },
         password: {
             type: String,
-            required: true
+            required: true,
         },
         phone: {
-            type: String
+            type: String,
         },
-        role_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Role',
+        
+        role: {
+            type: String,
+            enum: ['admin', 'user', 'manage'],
+            default: 'user',
             required: true,
-            default: new mongoose.Types.ObjectId("68298bbac47d4718e12fe1cd")
-
         },
         contact_subject: {
-            type: String
+            type: String,
         },
         contact_message: {
-            type: String
+            type: String,
         },
         contact_status: {
-            type: Boolean, default: false
+            type: Boolean,
+            default: false,
         },
         status: {
-            type: Boolean, default: true
+            type: Boolean,
+            default: true,
         },
     },
     {

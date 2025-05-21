@@ -7,11 +7,11 @@ import cors from "cors";
 import { PORT } from "./src/configs/environments.js";
 import jsonValid from "./src/middlewares/jsonInvalid.js";
 import setupSwagger from "./src/configs/swaggerConfig.js";
-
+import responseMiddleware from "./src/middlewares/responseMiddleware.js";
 
 const app = express();
 app.use(express.json());
-
+app.use(responseMiddleware);
 connectDB();
 
 app.use(

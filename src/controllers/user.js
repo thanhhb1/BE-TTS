@@ -1,69 +1,111 @@
 import User from "../models/User.js";
-import Role from "../models/Role.js";
-import { successResponse, errorResponse, validationError } from "../utils/response.js";
-import { userValid } from "../validation/user.js";
+import { userValid,roleValid } from "../validation/user.js";
 import bcrypt from "bcrypt";
+
+
 export const getUsers = async (req, res) => {
   try {
-    const { search = '', page = 1, limit = 10 } = req.query;
+    let {
+      _limit = 10,
+      _page = 1,
+      _sort = "createdAt",
+      _order = "desc",
+      search = "",
+    } = req.query;
 
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
+    _limit = parseInt(_limit);
+    _page = parseInt(_page);
 
     
-    const roles = await Role.find({ name: { $regex: search, $options: 'i' } });
-    const roleIds = roles.map(role => role._id);
-
-    
-    const condition = {
+    const query = {
       $or: [
-        { fullname: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { role: { $in: roleIds } }
-      ]
+        { fullname: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { role: { $regex: search, $options: "i" } },
+        { phone: { $regex: search, $options: "i" } }
+      ],
+      status: true, 
     };
 
-    const total = await User.countDocuments(condition);
+    const result = await User.countDocuments(query);
 
-    const users = await User.find(condition)
-      .skip((pageNum - 1) * limitNum)
-      .limit(limitNum)
-      .populate('role_id', 'name')
-      .exec();
+    const users = await User.find(query)
+      .sort({ [_sort]: _order === "asc" ? 1 : -1 })
+      .skip((_page - 1) * _limit)
+      .limit(_limit);
 
-    return successResponse(res, {
-      users,
-      pagination: {
-        total,
-        page: pageNum,
-        limit: limitNum,
-        totalPages: Math.ceil(total / limitNum),
-      }
-    });
+    return res.success(
+      {
+        result,
+        currPage: _page,
+        limit: _limit,
+        data: users,
+        hasMore: _page * _limit < result,
+      },
+      "Lấy danh sách người dùng thành công"
+    );
   } catch (error) {
-    return errorResponse(res, error.message);
+    return res.error("Lấy danh sách người dùng thất bại: " + error.message);
   }
 };
 
 
-export const create = async (req, res) => {
+
+export const createUser = async (req, res) => {
   try {
     const { error } = userValid.validate(req.body);
     if (error) {
-      return validationError(res, error.details[0].message);
+      return res.validation(error.details[0].message);
     }
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.validation("Email đã được đăng ký, vui lòng dùng email khác.");
+    }
+
+    
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const userData = { ...req.body, password: hashedPassword };
+
     const newUser = await User.create(userData);
 
-    return successResponse(res, newUser, "Thêm tài khoản thành công");
+    return res.success(newUser, "Tạo tài khoản thành công");
   } catch (error) {
-    return errorResponse(res, error.message);
+    return res.error(error.message);
   }
 };
 
-export const hide = async (req, res) => {
+
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    
+    const { error } = roleValid.validate(req.body);
+    if (error) {
+      return res.validation(error.details[0].message);
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true, select: 'fullname email phone role' } 
+    );
+
+    if (!updatedUser) {
+      return res.error("Người dùng không tồn tại");
+    }
+
+    
+    return res.success(updatedUser, "Cập nhật vai trò thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
+
+export const hideUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -72,16 +114,17 @@ export const hide = async (req, res) => {
     );
 
     if (!user) {
-      return successResponse(res, null, "Tài khoản không tồn tại");
+      return res.success(null, "Tài khoản không tồn tại");
     }
 
-    return successResponse(res, user, "Đã ẩn tài khoản thành công");
+    return res.success(user, "Đã ẩn tài khoản thành công");
   } catch (error) {
-    return errorResponse(res, error.message);
+    return res.error(error.message);
   }
 };
 
-export const unHide = async (req, res) => {
+
+export const unHideUser = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -90,15 +133,11 @@ export const unHide = async (req, res) => {
     );
 
     if (!user) {
-      return successResponse(res, null, "Tài khoản không tồn tại");
+      return res.success(null, "Tài khoản không tồn tại");
     }
 
-    return successResponse(res, user, "Bỏ ẩn tài khoản thành công");
+    return res.success(user, "Đã bỏ ẩn tài khoản thành công");
   } catch (error) {
-    return errorResponse(res, error.message);
+    return res.error(error.message);
   }
 };
-
-
-
-
