@@ -15,7 +15,7 @@ router.use('/products', routerProduct);
 router.use('/coupons', routerCoupon);
 
 
-// import routerAuth from './auth.js';
+
 
 
 // router.use('/auth', routerAuth);
