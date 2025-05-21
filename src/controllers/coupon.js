@@ -37,3 +37,37 @@ export const getCoupons = async (req, res) => {
         return res.error(error.message);
     }
 };
+
+export const getCouponById = async (req, res) => {
+    try {
+        const coupon = await findCouponById(req.params.id);
+        if (!coupon){
+            return res.success(null, "Không tìm thấy mã giảm giá" );
+        } 
+            
+        return res.success(coupon,"Lấy mã giảm giá thành công");
+    } catch (error) {
+        return res.error( error.message );
+    }
+};
+
+export const removeCoupon = async (req, res) => {
+    try {
+      
+        const existingCoupon = await findCouponById(req.params.id);
+        if (!existingCoupon) {
+            return res.success(null, "Không tìm thấy mã giảm giá để xóa");
+        }
+
+        
+        const deletedCoupon = await Coupon.findByIdAndUpdate(
+            id,
+            { isDeleted: true },
+            { new: true }
+        );
+
+        return res.success(deletedCoupon, "Đã xóa mềm mã giảm giá thành công");
+    } catch (error) {
+        return res.error(error.message);
+    }
+};
