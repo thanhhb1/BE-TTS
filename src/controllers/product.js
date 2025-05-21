@@ -3,7 +3,15 @@ import { productSchema } from '../validation/product.js';
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({ isDeleted: false }).populate("category_id");
+    const { search } = req.query;
+
+    let filter = { isDeleted: false };
+
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    const products = await Product.find(filter).populate("category_id");
 
     if (!products || products.length === 0) {
       return res.status(404).json({ message: "Không có sản phẩm nào" });
@@ -14,6 +22,7 @@ export const getProducts = async (req, res) => {
     return res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
+
 
 export const getDeletedProducts = async (req, res) => {
   try {
