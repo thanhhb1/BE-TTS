@@ -1,12 +1,20 @@
 import express from "express";
 import { 
     getReviews,
-    getReviewById
+    getReviewById,
+    updateReview,
+    removeReview,
+    restoreReview,
+    getDeletedReviews
  } from "../controllers/review.js";
 
 const routerReview = express.Router();
 
 routerReview.get("/", getReviews);
-routerCoupon.get("/:id", getReviewById);
+routerReview.get("/:id", getReviewById);
+routerReview.patch("/:id", updateReview);
+routerReview.delete("/:id",removeReview);
+routerReview.patch("/restore/:id", restoreReview);
+routerReview.get("/deleted", getDeletedReviews);
 
 export default routerReview;
