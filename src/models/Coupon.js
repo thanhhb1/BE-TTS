@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const couponSchema = new mongoose.Schema(
     {
         code: {
@@ -17,6 +18,18 @@ const couponSchema = new mongoose.Schema(
         },
         expiration_date: {
             type: Date
+        },
+        max_uses: {
+            type: Number,
+            default: 1 // ví dụ mặc định chỉ dùng 1 lần
+        },
+        uses: {
+            type: Number,
+            default: 0
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false
         },
     },
     {
