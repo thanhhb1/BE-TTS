@@ -45,7 +45,7 @@ export const createBrand = async (req, res) => {
   try {
     const { error, value } = brandValid.validate(req.body);
     if (error){
-        return res.success(error.details[0].message);
+        return res.validation(error.details[0].message);
     } 
 
     const existing = await Brand.findOne({ name: value.name });
@@ -66,7 +66,7 @@ export const updateBrand = async (req, res) => {
 
     const { error, value } = brandValid.validate(req.body);
     if (error) {
-      return res.success(error.details[0].message);
+      return res.validation(error.details[0].message);
     }
 
     if (value.name) {
