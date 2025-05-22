@@ -45,7 +45,7 @@ export const createBrand = async (req, res) => {
   try {
     const { error, value } = brandValid.validate(req.body);
     if (error){
-        return res.success(error.details[0].message);
+        return res.validation(error.details[0].message);
     } 
 
     const existing = await Brand.findOne({ name: value.name });
@@ -66,7 +66,7 @@ export const updateBrand = async (req, res) => {
 
     const { error, value } = brandValid.validate(req.body);
     if (error) {
-      return res.success(error.details[0].message);
+      return res.validation(error.details[0].message);
     }
 
     if (value.name) {
@@ -92,3 +92,64 @@ export const updateBrand = async (req, res) => {
     return res.error(error.message);
   }
 };
+export const removeBrand = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const brand = await Brand.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!brand){
+      return res.success(null, 'Thương hiệu không tồn tại');
+    } 
+
+    return res.success(brand, 'Xóa mềm thương hiệu thành công');
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+export const getDeletedBrands = async (req, res) => {
+  try {
+    const deletedBrands = await Brand.find({ isDeleted: true });
+    return res.success(deletedBrands, 'Danh sách thương hiệu đã xóa mềm');
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+export const restoreBrand = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const brand = await Brand.findByIdAndUpdate(
+      id,
+      { isDeleted: false },
+      { new: true }
+    );
+
+    if (!brand){
+      return res.success(null, 'Thương hiệu không tồn tại');
+    } 
+
+    return res.success(brand, 'Khôi phục thương hiệu thành công');
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+export const forceDeleteBrand = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const brand = await Brand.findByIdAndDelete(id);
+
+    if (!brand){
+      return res.success(null, 'Thương hiệu không tồn tại');
+    } 
+
+    return res.success(null, 'Xóa vĩnh viễn thương hiệu thành công');
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
+
+

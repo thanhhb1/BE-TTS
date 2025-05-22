@@ -68,7 +68,7 @@ export const updateReview = async (req, res) => {
   try {
     const { error, value } = statusValid.validate(req.body);
     if (error){
-        return res.success(error.details[0].message);
+        return res.validation(error.details[0].message);
     } 
     const { id } = req.params;
     const review = await Review.findById(id);

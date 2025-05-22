@@ -45,7 +45,7 @@ export const createBanner = async (req, res) => {
   try {
     const { error } = bannerSchema.validate(req.body);
     if (error){
-        return res.success(error.details[0].message);
+        return res.validation(error.details[0].message);
     } 
 
     const { title, imageUrl, link, isActive } = req.body;
@@ -61,7 +61,7 @@ export const updateBanner = async (req, res) => {
   try {
     const { error } = bannerSchema.validate(req.body);
     if (error){
-        return res.success(error.details[0].message);
+        return res.validation(error.details[0].message);
     } 
 
     const { id } = req.params;
