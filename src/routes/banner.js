@@ -15,7 +15,7 @@ routerBanner.get('/', getBanners);
 routerBanner.get('/trash', getDeletedBanners); 
 routerBanner.post('/', createBanner);
 routerBanner.put('/:id', updateBanner);
-routerBanner.patch('/:id', removeBanner);
+routerBanner.delete('/:id', removeBanner);
 routerBanner.patch('/restore/:id', restoreBanner); 
 routerBanner.delete('/forcedelete/:id', forceDeleteBanner); 
 
