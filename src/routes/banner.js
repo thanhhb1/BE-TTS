@@ -1,17 +1,22 @@
-import express from "express";
+import express from 'express';
 import {
   getBanners,
   createBanner,
-  updateBanner
-  
-} from "../controllers/banner.js";
+  updateBanner,
+  removeBanner,
+  restoreBanner,
+  getDeletedBanners,
+  forceDeleteBanner
+} from '../controllers/banner.js';
 
 const routerBanner = express.Router();
 
-routerBanner.get("/",getBanners);
-routerBanner.post("/",createBanner);
-routerBanner.put("/:id",updateBanner);
-
-
+routerBanner.get('/', getBanners); 
+routerBanner.get('/trash', getDeletedBanners); 
+routerBanner.post('/', createBanner);
+routerBanner.put('/:id', updateBanner);
+routerBanner.patch('/:id', removeBanner);
+routerBanner.patch('/restore/:id', restoreBanner); 
+routerBanner.delete('/forcedelete/:id', forceDeleteBanner); 
 
 export default routerBanner;

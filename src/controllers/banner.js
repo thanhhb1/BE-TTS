@@ -83,3 +83,71 @@ export const updateBanner = async (req, res) => {
   }
 };
 
+
+export const removeBanner = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const banner = await Banner.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true }
+    );
+
+    if (!banner){
+        return res.error(null,"Không tìm thấy banner");
+    } 
+
+    return res.success(banner, "Đã xóa mềm banner thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
+
+export const restoreBanner = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const banner = await Banner.findByIdAndUpdate(
+      id,
+      { isDeleted: false },
+      { new: true }
+    );
+
+    if (!banner){
+        return res.error(null,"Không tìm thấy banner");
+    } 
+
+    return res.success(banner, "Khôi phục banner thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
+
+export const getDeletedBanners = async (req, res) => {
+  try {
+    const banners = await Banner.find({ isDeleted: true });
+
+    return res.success(banners, "Lấy danh sách banner đã xóa mềm");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
+export const forceDeleteBanner = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const banner = await Banner.findByIdAndDelete(id);
+
+    if (!banner){
+        return res.error(null,"Không tìm thấy banner");
+    } 
+
+    return res.success(banner, "Đã xóa vĩnh viễn banner");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
