@@ -45,7 +45,7 @@ export const createBanner = async (req, res) => {
   try {
     const { error } = bannerSchema.validate(req.body);
     if (error){
-        return res.error(error.details[0].message);
+        return res.success(error.details[0].message);
     } 
 
     const { title, imageUrl, link, isActive } = req.body;
@@ -61,7 +61,7 @@ export const updateBanner = async (req, res) => {
   try {
     const { error } = bannerSchema.validate(req.body);
     if (error){
-        return res.error(error.details[0].message);
+        return res.success(error.details[0].message);
     } 
 
     const { id } = req.params;
@@ -74,7 +74,7 @@ export const updateBanner = async (req, res) => {
     );
 
     if (!banner){
-        return res.error(null,"Banner không tồn tại");
+        return res.success(null,"Banner không tồn tại");
     } 
 
     return res.success(banner, "Cập nhật banner thành công");
@@ -95,7 +95,7 @@ export const removeBanner = async (req, res) => {
     );
 
     if (!banner){
-        return res.error(null,"Không tìm thấy banner");
+        return res.success(null,"Không tìm thấy banner");
     } 
 
     return res.success(banner, "Đã xóa mềm banner thành công");
@@ -116,7 +116,7 @@ export const restoreBanner = async (req, res) => {
     );
 
     if (!banner){
-        return res.error(null,"Không tìm thấy banner");
+        return res.success(null,"Không tìm thấy banner");
     } 
 
     return res.success(banner, "Khôi phục banner thành công");
@@ -143,7 +143,7 @@ export const forceDeleteBanner = async (req, res) => {
     const banner = await Banner.findByIdAndDelete(id);
 
     if (!banner){
-        return res.error(null,"Không tìm thấy banner");
+        return res.success(null,"Không tìm thấy banner");
     } 
 
     return res.success(banner, "Đã xóa vĩnh viễn banner");
