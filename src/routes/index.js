@@ -4,6 +4,7 @@ import routerUser from './user.js';
 import routerProduct from './product.js';
 import routerCoupon from './coupon.js';
 import routerReview from './review.js';
+import routerBanner from './banner.js';
 
 
 // import routerAuth from './auth.js';
@@ -16,6 +17,8 @@ router.use('/users', routerUser);
 router.use('/products', routerProduct);
 router.use('/coupons', routerCoupon);
 router.use('/reviews', routerReview);
+router.use('/banners', routerBanner);
+
 
 
 
