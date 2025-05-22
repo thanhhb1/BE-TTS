@@ -40,3 +40,46 @@ export const getBanners = async (req, res) => {
     return res.error(error.message);
   }
 };
+
+export const createBanner = async (req, res) => {
+  try {
+    const { error } = bannerSchema.validate(req.body);
+    if (error){
+        return res.error(error.details[0].message);
+    } 
+
+    const { title, imageUrl, link, isActive } = req.body;
+
+    const newBanner = await Banner.create(req.body);
+
+    return res.success(newBanner, "Tạo banner thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+export const updateBanner = async (req, res) => {
+  try {
+    const { error } = bannerSchema.validate(req.body);
+    if (error){
+        return res.error(error.details[0].message);
+    } 
+
+    const { id } = req.params;
+    const { title, imageUrl, link, isActive } = req.body;
+
+    const banner = await Banner.findByIdAndUpdate(
+      id,
+      { title, imageUrl, link, isActive },
+      { new: true }
+    );
+
+    if (!banner){
+        return res.error(null,"Banner không tồn tại");
+    } 
+
+    return res.success(banner, "Cập nhật banner thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
