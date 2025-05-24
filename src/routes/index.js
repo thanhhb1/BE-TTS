@@ -6,10 +6,7 @@ import routerCoupon from './coupon.js';
 import routerReview from './review.js';
 import routerBanner from './banner.js';
 import routerBrand from './brand.js';
-
-
-
-// import routerAuth from './auth.js';
+import routerAuth from './auth.js';
 
 const router = express.Router();
 
@@ -21,15 +18,7 @@ router.use('/coupons', routerCoupon);
 router.use('/reviews', routerReview);
 router.use('/banners', routerBanner);
 router.use('/brands', routerBrand);
-
-
-
-
-
-
-
-
-// router.use('/auth', routerAuth);
+router.use('/auth', routerAuth);
 
 
 

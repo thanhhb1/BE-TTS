@@ -18,3 +18,10 @@ export const userValid = Joi.object({
 export const roleValid = Joi.object({
   role: Joi.string().valid('admin', 'user', 'manage').required()
 }).unknown(true);
+
+
+
+export const loginSchema = Joi.object({
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
+  password: Joi.string().min(6).required(),
+});
