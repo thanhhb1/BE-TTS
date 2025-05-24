@@ -1,41 +1,75 @@
 import Product from '../models/Product.js';
 import { productSchema } from '../validation/product.js';
-
 export const getProducts = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, page = 1, limit = 10, isDeleted } = req.query;
 
-    let filter = { isDeleted: false };
+    // Chuẩn bị điều kiện lọc
+    let filter = {};
+
+    if (isDeleted === "true") {
+      filter.isDeleted = true;
+    } else {
+      filter.isDeleted = false;
+    }
 
     if (search) {
       filter.name = { $regex: search, $options: "i" };
     }
 
-    const products = await Product.find(filter).populate("category_id");
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = parseInt(limit) || 10;
+    const skip = (pageNumber - 1) * limitNumber;
 
-    if (!products || products.length === 0) {
-      return res.status(404).json({ message: "Không có sản phẩm nào" });
-    }
+    const totalItems = await Product.countDocuments(filter);
 
-    return res.status(200).json(products);
+    const products = await Product.find(filter)
+      .populate("category_id")
+      .skip(skip)
+      .limit(limitNumber);
+
+    return res.status(200).json({
+      success: true,
+      products,
+      pagination: {
+        totalItems,
+        totalPages: Math.ceil(totalItems / limitNumber),
+        currentPage: pageNumber,
+        pageSize: limitNumber,
+      },
+    });
   } catch (error) {
     return res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
 
 
+
 export const getDeletedProducts = async (req, res) => {
   try {
-    const deletedProducts = await Product.find({ isDeleted: true }).populate("category_id");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
-    if (!deletedProducts || deletedProducts.length === 0) {
-      return res.status(404).json({ message: "Không có sản phẩm nào đã xóa mềm" });
-    }
+    // Lấy tổng số sản phẩm đã xóa
+    const totalItems = await Product.countDocuments({ isDeleted: true });
+
+    // Lấy sản phẩm theo phân trang
+    const deletedProducts = await Product.find({ isDeleted: true })
+      .skip(skip)
+      .limit(limit)
+      .populate("category_id");
 
     return res.status(200).json({
       success: true,
       message: "Danh sách sản phẩm đã xóa mềm",
       data: deletedProducts,
+      pagination: {
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+        currentPage: page,
+        pageSize: limit,
+      },
     });
   } catch (error) {
     return res.status(500).json({
