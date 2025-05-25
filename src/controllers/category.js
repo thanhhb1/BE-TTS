@@ -38,9 +38,6 @@ export const getCategories = async (req, res) => {
 };
 
 
-
-
-
 export const getCategoryById = async (req, res) => {
     try {
         const category = await Category.findOne({ _id: req.params.id, isDeleted: false });
@@ -81,14 +78,14 @@ export const updateCategory = async (req, res) => {
         if (error) {
             return res.validation(error.details[0].message);
         }
-        const isExist = await Category.findOne({
-            _id: req.params.id ,
-            name: req.body.name
-        });
-        if (isExist) {
-            return res.error("Tên danh mục đã tồn tại");
-        }
-
+      const isExist = await Category.findOne({
+    name: req.body.name,
+    _id: { $ne: req.params.id }, 
+    isDeleted: false
+});
+if (isExist) {
+    return res.error("Tên danh mục đã tồn tại");
+}
         const updatedCategory = await Category.findOneAndUpdate(
             { _id: req.params.id, isDeleted: false },
             req.body,
@@ -163,24 +160,40 @@ export const restoreCategory = async (req, res) => {
   }
 };
 
-
 export const forceDeleteCategory = async (req, res) => {
   try {
     const category = await Category.findOne({
       _id: req.params.id,
       isDeleted: true,
     });
+
     if (!category) {
       return res.success(null, "Không tìm thấy danh mục trong thùng rác.");
     }
 
+    // Tạo danh mục "Không xác định"
+    let uncategorized = await Category.findOne({ name: "Không xác định", isDeleted: false });
+
+    if (!uncategorized) {
+      uncategorized = await Category.create({
+        name: "Không xác định",
+        description: "Danh mục mặc định cho các sản phẩm không xác định",
+        isDeleted: false
+      });
+    }
+
+    // Chuyển toàn bộ sản phẩm về danh mục "Không xác định"
+    await Product.updateMany(
+      { category_id: category._id },
+      { $set: { category_id: uncategorized._id } }
+    );
+
+    // Xóa vĩnh viễn danh mục
     await Category.deleteOne({ _id: category._id });
 
-    return res.success(null, "Xóa vĩnh viễn danh mục thành công.");
+    return res.success(null, "Xóa vĩnh viễn danh mục thành công và đã chuyển sản phẩm sang 'Không xác định'.");
   } catch (error) {
     return res.error(error.message);
   }
 };
-
-
 
