@@ -183,7 +183,6 @@ export const getProductsByCategory = async (req, res) => {
   }
   try {
     const categoryObjectId = new mongoose.Types.ObjectId(categoryId);
-    console.log("Converted categoryObjectId:", categoryObjectId);
 
     const products = await Product.find({
       category_id: categoryObjectId,
