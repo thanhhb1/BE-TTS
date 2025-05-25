@@ -25,3 +25,16 @@ export const loginSchema = Joi.object({
   email: Joi.string().email({ tlds: { allow: false } }).required(),
   password: Joi.string().min(6).required(),
 });
+
+
+export const resetPasswordSchema = Joi.object({
+  token: Joi.string().required().messages({
+    'any.required': 'Token là bắt buộc',
+    'string.empty': 'Token không được để trống',
+  }),
+  newPassword: Joi.string().min(6).required().messages({
+    'any.required': 'Mật khẩu mới là bắt buộc',
+    'string.min': 'Mật khẩu mới phải ít nhất 6 ký tự',
+    'string.empty': 'Mật khẩu mới không được để trống',
+  }),
+});
