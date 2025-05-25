@@ -38,9 +38,6 @@ export const getCategories = async (req, res) => {
 };
 
 
-
-
-
 export const getCategoryById = async (req, res) => {
     try {
         const category = await Category.findOne({ _id: req.params.id, isDeleted: false });
@@ -81,14 +78,14 @@ export const updateCategory = async (req, res) => {
         if (error) {
             return res.validation(error.details[0].message);
         }
-        const isExist = await Category.findOne({
-            _id: req.params.id ,
-            name: req.body.name
-        });
-        if (isExist) {
-            return res.error("Tên danh mục đã tồn tại");
-        }
-
+      const isExist = await Category.findOne({
+    name: req.body.name,
+    _id: { $ne: req.params.id }, 
+    isDeleted: false
+});
+if (isExist) {
+    return res.error("Tên danh mục đã tồn tại");
+}
         const updatedCategory = await Category.findOneAndUpdate(
             { _id: req.params.id, isDeleted: false },
             req.body,

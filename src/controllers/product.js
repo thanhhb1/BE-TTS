@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 import { productSchema } from '../validation/product.js';
 export const getProducts = async (req, res) => {
@@ -174,30 +175,40 @@ export const restoreProduct = async (req, res) => {
 
 export const getProductsByCategory = async (req, res) => {
   const { categoryId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+    return res.status(400).json({
+      success: false,
+      message: "categoryId không hợp lệ",
+    });
+  }
   try {
-    const products = await Product.find({ 
-      category_id: categoryId, 
-      isDeleted: false 
-    }).populate('category_id');
+    const categoryObjectId = new mongoose.Types.ObjectId(categoryId);
+    console.log("Converted categoryObjectId:", categoryObjectId);
+
+    const products = await Product.find({
+      category_id: categoryObjectId,
+      isDeleted: false,
+    }).populate("category_id");
 
     if (products.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Không có sản phẩm nào trong danh mục này",
-        data: []
+        data: [],
       });
     }
 
     return res.status(200).json({
       success: true,
       message: "Lấy sản phẩm theo danh mục thành công",
-      data: products
+      data: products,
     });
   } catch (error) {
+    console.error("Lỗi truy vấn:", error);
     return res.status(500).json({
       success: false,
       message: "Lỗi server",
-      error: error.message
+      error: error.message,
     });
   }
 };
