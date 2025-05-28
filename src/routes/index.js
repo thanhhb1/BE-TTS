@@ -6,6 +6,7 @@ import routerCoupon from './coupon.js';
 import routerReview from './review.js';
 import routerBanner from './banner.js';
 import routerBrand from './brand.js';
+import routerOrder from './order.js';
 import routerAuth from './auth.js';
 
 import { authenticate, authorizeRoles } from '../middlewares/auth.js';
@@ -22,5 +23,7 @@ router.use('/admin/coupons', authenticate, authorizeRoles('admin','manage') ,rou
 router.use('/admin/reviews',authenticate, authorizeRoles('admin','manage') , routerReview);
 router.use('/admin/banners',authenticate, authorizeRoles('admin','manage') , routerBanner);
 router.use('/admin/brands', authenticate, authorizeRoles('admin','manage') ,routerBrand);
+router.use('/admin/orders', authenticate, authorizeRoles('admin','manage') ,routerOrder);
+
 
 export default router;
