@@ -9,19 +9,19 @@ import {
   getProductsByCategory,
   forceDeleteProduct
 } from "../controllers/product.js";
-
+import { authenticate, authorizeRoles } from "../middlewares/auth.js";
 import { Router } from "express";
 
 const routerProduct = Router();
 
-routerProduct.get("/", getProducts);
-routerProduct.get("/deleted", getDeletedProducts);  // xem các sản phẩm đã xóa mềm 
-routerProduct.get("/by-category/:categoryId", getProductsByCategory); // lấy sản phẩm theo danh mục
-routerProduct.get("/:id", getProductDetail);
-routerProduct.post("/", createProduct);
-routerProduct.put("/:id", updateProduct);
-routerProduct.delete("/:id", deleteProduct);
-routerProduct.patch("/restore/:id", restoreProduct); 
-routerProduct.delete("/forcedelete/:id", forceDeleteProduct); 
+routerProduct.get("/",authenticate, authorizeRoles("admin", "manage"), getProducts);
+routerProduct.get("/deleted",authenticate, authorizeRoles("admin"), getDeletedProducts);  
+routerProduct.get("/by-category/:categoryId",authenticate, authorizeRoles("admin", "manage"), getProductsByCategory); 
+routerProduct.get("/:id",authenticate, authorizeRoles("admin", "manage"), getProductDetail);
+routerProduct.post("/",authenticate, authorizeRoles("admin", "manage"), createProduct);
+routerProduct.put("/:id",authenticate, authorizeRoles("admin", "manage"), updateProduct);
+routerProduct.delete("/:id",authenticate, authorizeRoles("admin"), deleteProduct);
+routerProduct.patch("/restore/:id",authenticate, authorizeRoles("admin"), restoreProduct); 
+routerProduct.delete("/forcedelete/:id",authenticate, authorizeRoles("admin"), forceDeleteProduct); 
 
 export default routerProduct;

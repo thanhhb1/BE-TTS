@@ -1,18 +1,19 @@
 import express from "express";
 import {
-    getUsers,
-    createUser,
-    hideUser,
-    unHideUser,updateUser
+  getUsers,
+  createUser,
+  hideUser,
+  unHideUser,
+  updateUser
 } from "../controllers/user.js";
+import { authenticate, authorizeRoles } from "../middlewares/auth.js";
 
-const routerUser=express.Router();
+const routerUser = express.Router();
 
-routerUser.get("/",getUsers);
-routerUser.post("/",createUser);
-routerUser.put("/:id",updateUser);
-routerUser.patch("/:id/hide", hideUser);
-routerUser.patch("/:id/unhide", unHideUser);
-
+routerUser.get("/", authenticate, authorizeRoles("admin", "manage"), getUsers);
+routerUser.post("/", authenticate, authorizeRoles("admin", "manage"), createUser);
+routerUser.put("/:id", authenticate, authorizeRoles("admin", "manage"), updateUser);
+routerUser.patch("/:id/hide", authenticate, authorizeRoles("admin", "manage"), hideUser);
+routerUser.patch("/:id/unhide",authenticate, authorizeRoles("admin", "manage"), unHideUser);
 
 export default routerUser;

@@ -7,14 +7,14 @@ import {
     restoreReview,
     getDeletedReviews
  } from "../controllers/review.js";
-
+import { authenticate, authorizeRoles } from "../middlewares/auth.js";
 const routerReview = express.Router();
 
-routerReview.get("/", getReviews);
-routerReview.get("/:id", getReviewById);
-routerReview.patch("/:id", updateReview);
-routerReview.delete("/:id",removeReview);
-routerReview.patch("/restore/:id", restoreReview);
-routerReview.get("/trash", getDeletedReviews);
+routerReview.get("/",authenticate, authorizeRoles("admin", "manage"), getReviews);
+routerReview.get("/:id",authenticate, authorizeRoles("admin", "manage"), getReviewById);
+routerReview.patch("/:id",authenticate, authorizeRoles("admin", "manage"), updateReview);
+routerReview.delete("/:id",authenticate, authorizeRoles("admin"),removeReview);
+routerReview.patch("/restore/:id",authenticate, authorizeRoles("admin"), restoreReview);
+routerReview.get("/trash",authenticate, authorizeRoles("admin"), getDeletedReviews);
 
 export default routerReview;
