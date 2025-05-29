@@ -6,6 +6,10 @@ const productVariantSchema = new mongoose.Schema(
             ref: 'Product',
             required: true
         },
+        images: [{
+            type: String,
+            required:true
+        }],
         size: {
             type: String
         },
