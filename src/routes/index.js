@@ -8,6 +8,8 @@ import routerBanner from './banner.js';
 import routerBrand from './brand.js';
 import routerOrder from './order.js';
 import routerAuth from './auth.js';
+import routerClient  from './client.js';
+
 
 import { authenticate, authorizeRoles } from '../middlewares/auth.js';
 
@@ -24,6 +26,8 @@ router.use('/admin/reviews',authenticate, authorizeRoles('admin','manage') , rou
 router.use('/admin/banners',authenticate, authorizeRoles('admin','manage') , routerBanner);
 router.use('/admin/brands', authenticate, authorizeRoles('admin','manage') ,routerBrand);
 router.use('/admin/orders', authenticate, authorizeRoles('admin','manage') ,routerOrder);
+router.use('/client', routerClient);
+
 
 
 export default router;

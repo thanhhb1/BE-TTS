@@ -1,4 +1,8 @@
+import mongoose from "mongoose";
 import Order from "../models/Order.js";
+import ProductVariant from "../models/ProductVariant.js";
+
+
 export const getOrders = async (req, res) => {
   try {
     const {
@@ -45,6 +49,44 @@ export const getOrders = async (req, res) => {
       data: orders,
       hasMore: page * limit < total
     }, "Lấy danh sách đơn hàng thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
+
+export const getOrderItemById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.success(null, "OrderId không hợp lệ");
+    }
+
+    const order = await Order.findById(id)
+      .populate("user_id", "fullname email phone addresses")
+      .populate("items.product_id", "name price image")
+      .populate("items.variant_id", "size price image");
+
+    if (!order) {
+      return res.success(null, "Không tìm thấy đơn hàng");
+    }
+
+    const shippingAddress = order.user_id?.addresses?.find(
+      (addr) => addr._id.toString() === order.shipping_address_id.toString()
+    );
+
+    return res.success({
+      id: order._id,
+      user: order.user_id,
+      payment_method: order.payment_method_id,
+      order_status: order.order_status,
+      total_amount: order.total_amount,
+      invoice_number: order.invoice_number,
+      items: order.items,
+      shipping_address: shippingAddress || null,
+    }, "Lấy chi tiết đơn hàng thành công");
+
   } catch (error) {
     return res.error(error.message);
   }
