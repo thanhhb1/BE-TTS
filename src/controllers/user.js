@@ -50,6 +50,22 @@ export const getUsers = async (req, res) => {
 };
 
 
+export const getUserDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id).select("fullname email phone role status createdAt updatedAt");
+
+    if (!user) {
+      return res.error("Người dùng không tồn tại");
+    }
+
+    return res.success(user, "Lấy chi tiết người dùng thành công");
+  } catch (error) {
+    return res.error("Lỗi khi lấy chi tiết người dùng: " + error.message);
+  }
+};
+
 
 export const createUser = async (req, res) => {
   try {

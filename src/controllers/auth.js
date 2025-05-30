@@ -12,19 +12,19 @@ export const login = async (req, res) => {
   try {
     const { error } = loginSchema.validate(req.body);
     if (error) {
-      return res.validation(error.details[0].message);
+      return res.error(error.details[0].message);
     }
 
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.success(null,"Email không tồn tại");
+      return res.error(null,"Email không tồn tại");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.success(null,"Mật khẩu không đúng");
+      return res.error(null,"Mật khẩu không đúng");
     }
 
     const token = jwt.sign(
