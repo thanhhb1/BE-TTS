@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 import { productSchema } from '../validation/product.js';
+
 export const getProducts = async (req, res) => {
   try {
     const { search, page = 1, limit = 10, isDeleted } = req.query;
 
-    // Chuẩn bị điều kiện lọc
     let filter = {};
-
     if (isDeleted === "true") {
       filter.isDeleted = true;
     } else {
@@ -29,22 +28,19 @@ export const getProducts = async (req, res) => {
       .skip(skip)
       .limit(limitNumber);
 
-    return res.status(200).json({
-      success: true,
+    return res.success({
       products,
       pagination: {
         totalItems,
         totalPages: Math.ceil(totalItems / limitNumber),
         currentPage: pageNumber,
         pageSize: limitNumber,
-      },
-    });
+      }
+    }, "Lấy danh sách sản phẩm thành công");
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi server", error: error.message });
+    return res.error("Lỗi server", 500);
   }
 };
-
-
 
 export const getDeletedProducts = async (req, res) => {
   try {
@@ -52,46 +48,37 @@ export const getDeletedProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
-    // Lấy tổng số sản phẩm đã xóa
     const totalItems = await Product.countDocuments({ isDeleted: true });
 
-    // Lấy sản phẩm theo phân trang
     const deletedProducts = await Product.find({ isDeleted: true })
       .skip(skip)
       .limit(limit)
       .populate("category_id");
 
-    return res.status(200).json({
-      success: true,
-      message: "Danh sách sản phẩm đã xóa mềm",
+    return res.success({
       data: deletedProducts,
       pagination: {
         totalItems,
         totalPages: Math.ceil(totalItems / limit),
         currentPage: page,
         pageSize: limit,
-      },
-    });
+      }
+    }, "Danh sách sản phẩm đã xóa mềm");
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi server",
-      error: error.message,
-    });
+    return res.error("Lỗi server", 500);
   }
 };
-
 
 export const getProductDetail = async (req, res) => {
   const { id } = req.params;
   try {
     const product = await Product.findOne({ _id: id, isDeleted: false }).populate('category_id');
     if (!product) {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+      return res.error("Không tìm thấy sản phẩm", 404);
     }
-    return res.status(200).json(product);
+    return res.success(product, "Lấy chi tiết sản phẩm thành công");
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi server", error: error.message });
+    return res.error("Lỗi server", 500);
   }
 };
 
@@ -99,27 +86,20 @@ export const createProduct = async (req, res) => {
   try {
     const { error, value } = productSchema.validate(req.body);
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.validation(error.details[0].message, 400);
     }
 
-    // Kiểm tra tên sản phẩm đã tồn tại chưa
     const existingProduct = await Product.findOne({ name: value.name });
     if (existingProduct) {
-      return res.status(409).json({ message: "Tên sản phẩm đã tồn tại" }); 
+      return res.error("Tên sản phẩm đã tồn tại", 409);
     }
 
     const newProduct = new Product(value);
     await newProduct.save();
 
-    return res.status(201).json({
-      message: "Tạo sản phẩm thành công",
-      product: newProduct,
-    });
+    return res.success(newProduct, "Tạo sản phẩm thành công", 201);
   } catch (error) {
-    return res.status(500).json({
-      message: "Lỗi server",
-      error: error.message,
-    });
+    return res.error("Lỗi server", 500);
   }
 };
 
@@ -133,11 +113,11 @@ export const updateProduct = async (req, res) => {
       { new: true }
     );
     if (!updatedProduct) {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm để cập nhật" });
+      return res.error("Không tìm thấy sản phẩm để cập nhật", 404);
     }
-    return res.status(200).json({ message: "Cập nhật sản phẩm thành công", product: updatedProduct });
+    return res.success(updatedProduct, "Cập nhật sản phẩm thành công");
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi server", error: error.message });
+    return res.error("Lỗi server", 500);
   }
 };
 
@@ -146,13 +126,13 @@ export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(id);
     if (!product) {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm để xoá" });
+      return res.error("Không tìm thấy sản phẩm để xoá", 404);
     }
     product.isDeleted = true;
     await product.save();
-    return res.status(200).json({ message: "Xoá sản phẩm thành công (xóa mềm)", product });
+    return res.success(product, "Xoá sản phẩm thành công (xóa mềm)");
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi server", error: error.message });
+    return res.error("Lỗi server", 500);
   }
 };
 
@@ -161,25 +141,22 @@ export const restoreProduct = async (req, res) => {
   try {
     const product = await Product.findOne({ _id: id, isDeleted: true });
     if (!product) {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm để khôi phục" });
+      return res.error("Không tìm thấy sản phẩm để khôi phục", 404);
     }
 
     product.isDeleted = false;
     await product.save();
 
-    return res.status(200).json({ message: "Khôi phục sản phẩm thành công", product });
+    return res.success(product, "Khôi phục sản phẩm thành công");
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi server", error: error.message });
+    return res.error("Lỗi server", 500);
   }
 };
 
 export const getProductsByCategory = async (req, res) => {
   const { categoryId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(categoryId)) {
-    return res.status(400).json({
-      success: false,
-      message: "categoryId không hợp lệ",
-    });
+    return res.validation("categoryId không hợp lệ", 400);
   }
   try {
     const categoryObjectId = new mongoose.Types.ObjectId(categoryId);
@@ -190,28 +167,14 @@ export const getProductsByCategory = async (req, res) => {
     }).populate("category_id");
 
     if (products.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Không có sản phẩm nào trong danh mục này",
-        data: [],
-      });
+      return res.error("Không có sản phẩm nào trong danh mục này", 404);
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Lấy sản phẩm theo danh mục thành công",
-      data: products,
-    });
+    return res.success(products, "Lấy sản phẩm theo danh mục thành công");
   } catch (error) {
-    console.error("Lỗi truy vấn:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi server",
-      error: error.message,
-    });
+    return res.error("Lỗi server", 500);
   }
 };
-
 
 // Xóa vĩnh viễn sản phẩm
 export const forceDeleteProduct = async (req, res) => {
@@ -222,13 +185,13 @@ export const forceDeleteProduct = async (req, res) => {
     });
 
     if (!product) {
-      return res.status(404).json({ message: "Không tìm thấy sản phẩm trong thùng rác" });
+      return res.error("Không tìm thấy sản phẩm trong thùng rác", 404);
     }
 
     await Product.deleteOne({ _id: product._id });
 
-    return res.status(200).json({ message: "Xóa vĩnh viễn sản phẩm thành công" });
+    return res.success(null, "Xóa vĩnh viễn sản phẩm thành công");
   } catch (error) {
-    return res.status(500).json({ message: "Lỗi khi xóa sản phẩm", error: error.message });
+    return res.error("Lỗi khi xóa sản phẩm", 500);
   }
 };

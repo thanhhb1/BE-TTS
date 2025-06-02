@@ -34,7 +34,7 @@ export const getBrands = async (req, res) => {
         data: listBrands,
         hasMore: _page * _limit < result,
       },
-      'Lấy danh sách brand thành công'
+      'Lấy danh sách thương hiệu thành công'
     );
   } catch (error) {
     return res.error(error.message);
@@ -49,7 +49,7 @@ export const createBrand = async (req, res) => {
     } 
 
     const existing = await Brand.findOne({ name: value.name });
-    if (existing) return res.success(null,'Tên thương hiệu đã tồn tại');
+    if (existing) return res.validation('Tên thương hiệu đã tồn tại');
 
     const newBrand = new Brand(value);
     await newBrand.save();
@@ -77,14 +77,14 @@ export const updateBrand = async (req, res) => {
       });
 
       if (existingBrand) {
-        return res.success(null, 'Tên thương hiệu đã tồn tại');
+        return res.validation('Tên thương hiệu đã tồn tại');
       }
     }
 
     const brand = await Brand.findByIdAndUpdate(id, value, { new: true });
 
     if (!brand) {
-      return res.success(null, 'Thương hiệu không tồn tại');
+      return res.error('Thương hiệu không tồn tại', 404);
     }
 
     return res.success(brand, 'Cập nhật thương hiệu thành công');
@@ -92,6 +92,7 @@ export const updateBrand = async (req, res) => {
     return res.error(error.message);
   }
 };
+
 export const removeBrand = async (req, res) => {
   try {
     const { id } = req.params;
@@ -102,7 +103,7 @@ export const removeBrand = async (req, res) => {
     );
 
     if (!brand){
-      return res.success(null, 'Thương hiệu không tồn tại');
+      return res.error('Thương hiệu không tồn tại', 404);
     } 
 
     return res.success(brand, 'Xóa mềm thương hiệu thành công');
@@ -110,6 +111,7 @@ export const removeBrand = async (req, res) => {
     return res.error(error.message);
   }
 };
+
 export const getDeletedBrands = async (req, res) => {
   try {
     const deletedBrands = await Brand.find({ isDeleted: true });
@@ -118,6 +120,7 @@ export const getDeletedBrands = async (req, res) => {
     return res.error(error.message);
   }
 };
+
 export const restoreBrand = async (req, res) => {
   try {
     const { id } = req.params;
@@ -128,7 +131,7 @@ export const restoreBrand = async (req, res) => {
     );
 
     if (!brand){
-      return res.success(null, 'Thương hiệu không tồn tại');
+      return res.error('Thương hiệu không tồn tại', 404);
     } 
 
     return res.success(brand, 'Khôi phục thương hiệu thành công');
@@ -136,13 +139,14 @@ export const restoreBrand = async (req, res) => {
     return res.error(error.message);
   }
 };
+
 export const forceDeleteBrand = async (req, res) => {
   try {
     const { id } = req.params;
     const brand = await Brand.findByIdAndDelete(id);
 
     if (!brand){
-      return res.success(null, 'Thương hiệu không tồn tại');
+      return res.error('Thương hiệu không tồn tại', 404);
     } 
 
     return res.success(null, 'Xóa vĩnh viễn thương hiệu thành công');
@@ -150,6 +154,3 @@ export const forceDeleteBrand = async (req, res) => {
     return res.error(error.message);
   }
 };
-
-
-

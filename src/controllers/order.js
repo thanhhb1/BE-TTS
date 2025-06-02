@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import Order from "../models/Order.js";
+import User from "../models/User.js";  // nhớ import User vì bạn dùng find user
 import ProductVariant from "../models/ProductVariant.js";
-
-
 
 export const getOrders = async (req, res) => {
   try {
@@ -55,8 +54,6 @@ export const getOrders = async (req, res) => {
   }
 };
 
-
-
 export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -68,7 +65,7 @@ export const getOrderById = async (req, res) => {
       .populate("items.variant_id", "size price image");
 
     if (!order) {
-      return res.success(null, "Không tìm thấy đơn hàng");
+      return res.error("Không tìm thấy đơn hàng", 404);
     }
 
     return res.success(order, "Lấy chi tiết đơn hàng thành công");
@@ -76,7 +73,6 @@ export const getOrderById = async (req, res) => {
     return res.error(error.message);
   }
 };
-
 
 export const updateOrderStatus = async (req, res) => {
   try {
@@ -86,11 +82,11 @@ export const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(id).populate("user_id", "name email");
 
     if (!order) {
-      return res.success(null, "Đơn hàng không tồn tại");
+      return res.error("Đơn hàng không tồn tại", 404);
     }
 
     if (order.order_status === "cancelled") {
-      return res.success(null, "Không thể cập nhật đơn hàng đã bị hủy");
+      return res.error("Không thể cập nhật đơn hàng đã bị hủy", 400);
     }
 
     const validOrderStatuses = ["pending", "processing", "shipped", "delivered", "cancelled", "returned"];
@@ -98,15 +94,14 @@ export const updateOrderStatus = async (req, res) => {
 
     const isCancellingNow = order_status === "cancelled";
 
-
     if (payment_status && payment_status !== order.payment_status) {
       if (!validPaymentStatuses.includes(payment_status)) {
-        return res.success(null, "Trạng thái thanh toán không hợp lệ");
+        return res.error("Trạng thái thanh toán không hợp lệ", 400);
       }
 
       if (order.order_status === "cancelled" || isCancellingNow) {
         if (order.payment_method === "cash_on_delivery") {
-          return res.success(null, "Đơn hàng COD đã bị hủy, không thể thay đổi trạng thái thanh toán.");
+          return res.error("Đơn hàng COD đã bị hủy, không thể thay đổi trạng thái thanh toán.", 400);
         }
       }
 
@@ -116,11 +111,11 @@ export const updateOrderStatus = async (req, res) => {
         order.order_status !== "delivered" &&
         !isCancellingNow
       ) {
-        return res.success(null, "COD chỉ được xác nhận thanh toán khi đơn đã được giao.");
+        return res.error("COD chỉ được xác nhận thanh toán khi đơn đã được giao.", 400);
       }
 
       if (order.payment_status === "completed" && payment_status !== "refunded") {
-        return res.success(null, "Thanh toán đã hoàn tất. Không thể thay đổi nữa.");
+        return res.error("Thanh toán đã hoàn tất. Không thể thay đổi nữa.", 400);
       }
 
       if (
@@ -128,16 +123,15 @@ export const updateOrderStatus = async (req, res) => {
         payment_status === "refunded" &&
         order.order_status !== "delivered"
       ) {
-        return res.success(null, "Đơn hàng chưa được giao nên không thể hoàn tiền với phương thức COD.");
+        return res.error("Đơn hàng chưa được giao nên không thể hoàn tiền với phương thức COD.", 400);
       }
 
       order.payment_status = payment_status;
     }
 
-
     if (order_status && order_status !== order.order_status) {
       if (!validOrderStatuses.includes(order_status)) {
-        return res.success(null, "Trạng thái đơn hàng không hợp lệ");
+        return res.error("Trạng thái đơn hàng không hợp lệ", 400);
       }
 
       const flow = ["pending", "processing", "shipped", "delivered"];
@@ -146,10 +140,10 @@ export const updateOrderStatus = async (req, res) => {
 
       if (order_status === "cancelled") {
         if (order.order_status === "returned") {
-          return res.success(null, "Đơn hàng đã hoàn trả, không thể hủy.");
+          return res.error("Đơn hàng đã hoàn trả, không thể hủy.", 400);
         }
         if (currentIndex >= flow.indexOf("shipped")) {
-          return res.success(null, "Đơn hàng đã giao cho ship không thể hủy.");
+          return res.error("Đơn hàng đã giao cho ship không thể hủy.", 400);
         }
 
         const onlineMethods = ["credit_card", "bank_transfer"];
@@ -163,7 +157,7 @@ export const updateOrderStatus = async (req, res) => {
         order.order_status = "cancelled";
       } else {
         if (order_status !== "returned" && newIndex < currentIndex) {
-          return res.success(null, "Không thể cập nhật lùi trạng thái đơn hàng");
+          return res.error("Không thể cập nhật lùi trạng thái đơn hàng", 400);
         }
 
         const onlineMethods = ["credit_card", "bank_transfer"];
@@ -172,7 +166,7 @@ export const updateOrderStatus = async (req, res) => {
           onlineMethods.includes(order.payment_method) &&
           order.payment_status !== "completed"
         ) {
-          return res.success(null, "Chưa hoàn tất thanh toán, không thể cập nhật đơn hàng");
+          return res.error("Chưa hoàn tất thanh toán, không thể cập nhật đơn hàng", 400);
         }
 
         if (
@@ -187,7 +181,7 @@ export const updateOrderStatus = async (req, res) => {
           if (order.payment_status === "completed") {
             order.payment_status = "refunded";
           } else {
-            return res.success(null, "Chưa thanh toán. Không thể hoàn trả đơn hàng.");
+            return res.error("Chưa thanh toán. Không thể hoàn trả đơn hàng.", 400);
           }
         }
 
