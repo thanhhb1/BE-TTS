@@ -1,4 +1,5 @@
 import Banner from '../models/Banner.js';
+import { bannerSchema } from '../validation/banner.js';
 
 export const getBanners = async (req, res) => {
   try {
@@ -26,16 +27,13 @@ export const getBanners = async (req, res) => {
       .skip((_page - 1) * _limit)
       .limit(_limit);
 
-    return res.success(
-      {
-        result,
-        currPage: _page,
-        limit: _limit,
-        data: listBanners,
-        hasMore: _page * _limit < result,
-      },
-      'Lấy danh sách banner thành công'
-    );
+    return res.success({
+      result,
+      currPage: _page,
+      limit: _limit,
+      data: listBanners,
+      hasMore: _page * _limit < result,
+    }, 'Lấy danh sách banner thành công');
   } catch (error) {
     return res.error(error.message);
   }
@@ -44,25 +42,23 @@ export const getBanners = async (req, res) => {
 export const createBanner = async (req, res) => {
   try {
     const { error } = bannerSchema.validate(req.body);
-    if (error){
-        return res.validation(error.details[0].message);
-    } 
-
-    const { title, imageUrl, link, isActive } = req.body;
+    if (error) {
+      return res.validation(error.details[0].message);
+    }
 
     const newBanner = await Banner.create(req.body);
-
     return res.success(newBanner, "Tạo banner thành công");
   } catch (error) {
     return res.error(error.message);
   }
 };
+
 export const updateBanner = async (req, res) => {
   try {
     const { error } = bannerSchema.validate(req.body);
-    if (error){
-        return res.validation(error.details[0].message);
-    } 
+    if (error) {
+      return res.validation(error.details[0].message);
+    }
 
     const { id } = req.params;
     const { title, imageUrl, link, isActive } = req.body;
@@ -73,16 +69,15 @@ export const updateBanner = async (req, res) => {
       { new: true }
     );
 
-    if (!banner){
-        return res.success(null,"Banner không tồn tại");
-    } 
+    if (!banner) {
+      return res.error("Banner không tồn tại", 404);
+    }
 
     return res.success(banner, "Cập nhật banner thành công");
   } catch (error) {
     return res.error(error.message);
   }
 };
-
 
 export const removeBanner = async (req, res) => {
   try {
@@ -94,16 +89,15 @@ export const removeBanner = async (req, res) => {
       { new: true }
     );
 
-    if (!banner){
-        return res.success(null,"Không tìm thấy banner");
-    } 
+    if (!banner) {
+      return res.error("Không tìm thấy banner", 404);
+    }
 
     return res.success(banner, "Đã xóa mềm banner thành công");
   } catch (error) {
     return res.error(error.message);
   }
 };
-
 
 export const restoreBanner = async (req, res) => {
   try {
@@ -115,9 +109,9 @@ export const restoreBanner = async (req, res) => {
       { new: true }
     );
 
-    if (!banner){
-        return res.success(null,"Không tìm thấy banner");
-    } 
+    if (!banner) {
+      return res.error("Không tìm thấy banner", 404);
+    }
 
     return res.success(banner, "Khôi phục banner thành công");
   } catch (error) {
@@ -125,11 +119,9 @@ export const restoreBanner = async (req, res) => {
   }
 };
 
-
 export const getDeletedBanners = async (req, res) => {
   try {
     const banners = await Banner.find({ isDeleted: true });
-
     return res.success(banners, "Lấy danh sách banner đã xóa mềm");
   } catch (error) {
     return res.error(error.message);
@@ -142,9 +134,9 @@ export const forceDeleteBanner = async (req, res) => {
 
     const banner = await Banner.findByIdAndDelete(id);
 
-    if (!banner){
-        return res.success(null,"Không tìm thấy banner");
-    } 
+    if (!banner) {
+      return res.error("Không tìm thấy banner", 404);
+    }
 
     return res.success(banner, "Đã xóa vĩnh viễn banner");
   } catch (error) {

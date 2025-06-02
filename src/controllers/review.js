@@ -55,7 +55,7 @@ export const getReviewById = async (req, res) => {
       .populate("user_id", "fullname ");
 
     if (!review) {
-      return res.success(null, "Không tìm thấy đánh giá");
+      return res.error( "Không tìm thấy đánh giá",404 );
     }
 
     return res.success(review, "Lấy đánh giá thành công");
@@ -73,7 +73,7 @@ export const updateReview = async (req, res) => {
     const { id } = req.params;
     const review = await Review.findById(id);
     if (!review){
-        return res.success(null,"Không tìm thấy đánh giá");
+        return res.error("Không tìm thấy đánh giá",404);
     } 
     review.status = value.status;
     await review.save();
@@ -90,7 +90,7 @@ export const removeReview = async (req, res) => {
     const existingReview = await Review.findOne({ _id: id, deleted: false });
 
     if (!existingReview) {
-      return res.success(null, "Không tìm thấy đánh giá để xóa");
+      return res.error( "Không tìm thấy đánh giá để xóa",404);
     }
 
     const deletedReview = await Review.findByIdAndUpdate(
@@ -113,7 +113,7 @@ export const restoreReview = async (req, res) => {
     const existingReview = await Review.findOne({ _id: id, deleted: true });
 
     if (!existingReview) {
-      return res.success(null, "Không tìm thấy đánh giá đã xóa để khôi phục");
+      return res.error("Không tìm thấy đánh giá đã xóa để khôi phục",404);
     }
 
     const restoredReview = await Review.findByIdAndUpdate(

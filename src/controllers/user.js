@@ -66,7 +66,7 @@ export const getUserDetail = async (req, res) => {
     const user = await User.findById(id).select("fullname email phone role status createdAt updatedAt");
 
     if (!user) {
-      return res.error("Người dùng không tồn tại");
+      return res.error("Người dùng không tồn tại",404);
     }
 
     return res.success(user, "Lấy chi tiết người dùng thành công");
@@ -119,7 +119,7 @@ export const updateUser = async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.error("Người dùng không tồn tại");
+      return res.error("Người dùng không tồn tại",404 );
     }
 
     
@@ -134,7 +134,7 @@ export const deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(req.params.id);
 
     if (!user) {
-      return res.error("Người dùng không tồn tại");
+      return res.error("Người dùng không tồn tại",404);
     }
 
     return res.success(user, "Xóa người dùng thành công");
