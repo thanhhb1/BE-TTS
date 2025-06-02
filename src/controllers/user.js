@@ -11,21 +11,30 @@ export const getUsers = async (req, res) => {
       _sort = "createdAt",
       _order = "desc",
       search = "",
+      role = "",
     } = req.query;
 
     _limit = parseInt(_limit);
     _page = parseInt(_page);
 
-    
+    const searchRegex = { $regex: search, $options: "i" };
+
+    // Cơ sở truy vấn
     const query = {
       $or: [
-        { fullname: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { role: { $regex: search, $options: "i" } },
-        { phone: { $regex: search, $options: "i" } }
+        { fullname: searchRegex },
+        { email: searchRegex },
+        { role: searchRegex },
+        { phone: searchRegex },
       ],
-      status: true, 
+      status: true,
     };
+
+    // Nếu có lọc theo vai trò
+if (role) {
+  const roles = role.split(",");
+  query.role = { $in: roles };
+}
 
     const result = await User.countDocuments(query);
 
@@ -117,6 +126,20 @@ export const updateUser = async (req, res) => {
     return res.success(updatedUser, "Cập nhật vai trò thành công");
   } catch (error) {
     return res.error(error.message);
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.error("Người dùng không tồn tại");
+    }
+
+    return res.success(user, "Xóa người dùng thành công");
+  } catch (error) {
+    return res.error("Lỗi khi xóa người dùng: " + error.message);
   }
 };
 
