@@ -171,18 +171,18 @@ export const forceDeleteCategory = async (req, res) => {
       return res.success(null, "Không tìm thấy danh mục trong thùng rác.");
     }
 
-    // Tạo danh mục "Không xác định"
-    let uncategorized = await Category.findOne({ name: "Không xác định", isDeleted: false });
+    // Tạo danh mục "Danh mục mặc định"
+    let uncategorized = await Category.findOne({ name: "Danh mục mặc định", isDeleted: false });
 
     if (!uncategorized) {
       uncategorized = await Category.create({
-        name: "Không xác định",
-        description: "Danh mục mặc định cho các sản phẩm không xác định",
+        name: "Danh mục mặc định",
+        description: "Danh mục mặc định cho các sản phẩm Danh mục mặc định",
         isDeleted: false
       });
     }
 
-    // Chuyển toàn bộ sản phẩm về danh mục "Không xác định"
+    // Chuyển toàn bộ sản phẩm về danh mục "Danh mục mặc định"
     await Product.updateMany(
       { category_id: category._id },
       { $set: { category_id: uncategorized._id } }
@@ -191,7 +191,7 @@ export const forceDeleteCategory = async (req, res) => {
     // Xóa vĩnh viễn danh mục
     await Category.deleteOne({ _id: category._id });
 
-    return res.success(null, "Xóa vĩnh viễn danh mục thành công và đã chuyển sản phẩm sang 'Không xác định'.");
+    return res.success(null, "Xóa vĩnh viễn danh mục thành công và đã chuyển sản phẩm sang 'Danh mục mặc định'.");
   } catch (error) {
     return res.error(error.message);
   }
