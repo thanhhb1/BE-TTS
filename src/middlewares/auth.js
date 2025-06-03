@@ -23,7 +23,10 @@ export const authenticate = async (req, res, next) => {
       });
     }
 
-    req.user = user;
+    req.user = {
+      _id: user._id.toString(),
+      role: user.role
+    };
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
