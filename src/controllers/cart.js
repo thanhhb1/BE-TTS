@@ -27,8 +27,11 @@ export const getCarts = async (req, res) => {
 export const addToCart = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { product_id, variant_id, quantity } = req.body;
-
+    let { product_id, variant_id, quantity } = req.body;
+    quantity = parseInt(quantity);
+    if (isNaN(quantity) || quantity < 1) {
+      quantity = 1;
+    }
     let price = 0;
     let subtotal = 0;
 
@@ -140,17 +143,17 @@ export const removeCart = async (req, res) => {
     const { items } = req.body;
 
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ success: false, message: "Danh sách sản phẩm cần xoá không hợp lệ" });
+      return res.validation("Danh sách sản phẩm cần xoá không hợp lệ");
     }
 
     const cart = await Cart.findOne({ user_id: userId });
     if (!cart) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy giỏ hàng" });
+      return res.error("Không tìm thấy giỏ hàng", 404);
     }
 
     cart.items = cart.items.filter(item => {
       return !items.some(x => {
-        const productIdMatch = item.product_id._id.toString() === x.product_id;
+        const productIdMatch = item.product_id.toString() === x.product_id;
         const variantIdMatch = (x.variant_id && item.variant_id?.toString() === x.variant_id) || (!x.variant_id && !item.variant_id);
         return productIdMatch && variantIdMatch;
       });
@@ -158,16 +161,9 @@ export const removeCart = async (req, res) => {
 
     await cart.save();
 
-    return res.status(200).json({
-      success: true,
-      message: "Đã xoá các sản phẩm đã chọn khỏi giỏ hàng",
-      data: cart
-    });
+    return res.success(cart, "Đã xoá các sản phẩm đã chọn khỏi giỏ hàng");
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Lỗi khi xoá nhiều sản phẩm khỏi giỏ hàng"
-    });
+    return res.error("Lỗi khi xoá nhiều sản phẩm khỏi giỏ hàng");
   }
 };
