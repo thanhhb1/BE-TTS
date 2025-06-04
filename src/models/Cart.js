@@ -16,7 +16,9 @@ const cartSchema = new mongoose.Schema(
                     ref: 'ProductVariant'
                 },
                 quantity: {
-                    type: Number
+                    type: Number,
+                    default: 1,        
+                    min: 1,
                 },
                 subtotal: {
                     type: Number
