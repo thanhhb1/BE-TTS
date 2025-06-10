@@ -6,7 +6,7 @@ import {
   getProductsByCategory,
 
 } from "../controllers/product.js";
-import {addToCart, getCarts,updateCartItem,removeCart} from '../controllers/cart.js';
+import {addToCart, getCarts,updateCartItem,removeCarts ,removeCartItem} from '../controllers/cart.js';
 import { createUser, getUserDetail, getUsers, updateUser } from '../controllers/user.js';
 import { getCategories, getCategoryById } from '../controllers/category.js';
 import { authenticate, authorizeRoles } from "../middlewares/auth.js";
@@ -28,12 +28,13 @@ routerClient.get('/products/by-category/:categoryId', getProductsByCategory);  /
 routerClient.get('/carts', authenticate, authorizeRoles("user"), getCarts); 
 routerClient.post('/carts', authenticate, authorizeRoles("user"), addToCart);
 routerClient.put('/carts', authenticate, authorizeRoles("user"), updateCartItem); 
-routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCart);
+routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCarts);
 
 routerClient.get('/carts', authenticate, authorizeRoles("user"), getCarts); 
 routerClient.post('/carts', authenticate, authorizeRoles("user"), addToCart);
 routerClient.put('/carts', authenticate, authorizeRoles("user"), updateCartItem); 
-routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCart);
+routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCarts);
+routerClient.delete('/carts/item',authenticate, authorizeRoles("user"), removeCartItem);
 
 routerClient.get('/productvariant', authenticate, authorizeRoles("user"), getProductVariants); 
 routerClient.get('/productvariant/:id', authenticate, authorizeRoles("user"), getVariantById);

@@ -137,7 +137,43 @@ export const updateCartItem = async (req, res) => {
     return res.error("Lỗi khi cập nhật sản phẩm trong giỏ hàng");
   }
 };
-export const removeCart = async (req, res) => {
+export const removeCartItem = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { product_id, variant_id } = req.body;
+
+    if (!product_id) {
+      return res.validation("Thiếu product_id");
+    }
+
+    const cart = await Cart.findOne({ user_id: userId });
+    if (!cart) {
+      return res.error("Không tìm thấy giỏ hàng", 404);
+    }
+
+    const beforeCount = cart.items.length;
+
+    cart.items = cart.items.filter(item => {
+      const productIdMatch = item.product_id.toString() !== product_id;
+      const variantIdMatch =
+        (variant_id && item.variant_id?.toString() !== variant_id) ||
+        (!variant_id && item.variant_id); 
+      return productIdMatch || variantIdMatch;
+    });
+
+    if (cart.items.length === beforeCount) {
+      return res.error("Không tìm thấy sản phẩm cần xoá trong giỏ hàng", 404);
+    }
+
+    await cart.save();
+    return res.success(cart, "Xoá sản phẩm khỏi giỏ hàng thành công");
+  } catch (error) {
+    console.error(error);
+    return res.error("Lỗi khi xoá sản phẩm khỏi giỏ hàng");
+  }
+};
+
+export const removeCarts = async (req, res) => {
   try {
     const userId = req.user._id;
     const { items } = req.body;
