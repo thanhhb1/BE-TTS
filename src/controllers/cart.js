@@ -47,7 +47,7 @@ export const addToCart = async (req, res) => {
       const product = await Product.findById(product_id);
       if (!product) return res.error("Sản phẩm không tồn tại");
 
-      price = product.price;
+      price = product.discount_price;
     }
 
     subtotal = price * quantity;
