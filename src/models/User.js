@@ -38,8 +38,20 @@ const userSchema = new mongoose.Schema({
     contact_status: { type: Boolean, default: false },
     status: { type: Boolean, default: true },
 
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
+
+    isVerified: { type: Boolean, default: false },
+    otp: String,
+    otpExpiresAt: Date,
+    otpSendCount: { type: Number, default: 0 },
+    otpLastSentAt: Date,
+    isAllowedResetPassword: { type: Boolean, default: false },
+    otpWrongCountVerify: { type: Number, default: 0 },
+    otpBlockedUntilVerify: { type: Date, default: null },
+
+    otpWrongCountForgot: { type: Number, default: 0 },
+    otpBlockedUntilForgot: { type: Date, default: null },
+    isLocked: { type: Boolean, default: false },
+
 }, {
     timestamps: true,
     versionKey: false,
