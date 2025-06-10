@@ -230,7 +230,7 @@ export const forgotPassword = async (req, res) => {
 
     
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 phút
+    const expiresAt = new Date(Date.now() + 2 * 60 * 1000); 
 
     user.otp = otp;
     user.otpExpiresAt = expiresAt;
@@ -293,9 +293,9 @@ export const verifyForgotOtp = async (req, res) => {
       user.otpWrongCountForgot = (user.otpWrongCountForgot || 0) + 1;
 
       if (user.otpWrongCountForgot === 5) {
-        user.otpBlockedUntilForgot = new Date(Date.now() + 10 * 60 * 1000); // 10 phút
+        user.otpBlockedUntilForgot = new Date(Date.now() + 10 * 60 * 1000); 
       } else if (user.otpWrongCountForgot === 6) {
-        user.otpBlockedUntilForgot = new Date(Date.now() + 30 * 60 * 1000); // 30 phút
+        user.otpBlockedUntilForgot = new Date(Date.now() + 30 * 60 * 1000); 
       } else if (user.otpWrongCountForgot >= 7) {
         user.isLocked = true;
       }
