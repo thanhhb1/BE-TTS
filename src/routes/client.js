@@ -9,7 +9,8 @@ import {
 import {addToCart, getCarts,updateCartItem,removeCart} from '../controllers/cart.js';
 import { createUser, getUserDetail, getUsers, updateUser } from '../controllers/user.js';
 import { getCategories, getCategoryById } from '../controllers/category.js';
-import { authenticate} from "../middlewares/auth.js";
+import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+import { getProductVariants, getVariantById } from '../controllers/productvariant.js';
 const routerClient = express.Router();
 
 routerClient.get('/banners', getBanners); 
@@ -24,12 +25,18 @@ routerClient.get('/categories', getCategories); //Lấy tên danh mục
 routerClient.get('/categories/:id', getCategoryById); //Lấy ID danh mục
 routerClient.get('/products/by-category/:categoryId', getProductsByCategory);  //Lấy sản phẩm theo danh mục
 
-routerClient.get('/carts',authenticate, getCarts); 
-routerClient.post('/carts',authenticate, addToCart);
-routerClient.put('/carts',authenticate,updateCartItem ); 
-routerClient.delete('/carts',authenticate,removeCart ); 
+routerClient.get('/carts', authenticate, authorizeRoles("user"), getCarts); 
+routerClient.post('/carts', authenticate, authorizeRoles("user"), addToCart);
+routerClient.put('/carts', authenticate, authorizeRoles("user"), updateCartItem); 
+routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCart);
 
+routerClient.get('/carts', authenticate, authorizeRoles("user"), getCarts); 
+routerClient.post('/carts', authenticate, authorizeRoles("user"), addToCart);
+routerClient.put('/carts', authenticate, authorizeRoles("user"), updateCartItem); 
+routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCart);
 
+routerClient.get('/productvariant', authenticate, authorizeRoles("user"), getProductVariants); 
+routerClient.get('/productvariant/:id', authenticate, authorizeRoles("user"), getVariantById);
 
 
 export default routerClient;
