@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
-import { loginSchema, resetPasswordSchema } from '../validation/user.js';
+import User from '../user/User.model.js';
+import { loginSchema, resetPasswordSchema } from './user.validation.js';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 

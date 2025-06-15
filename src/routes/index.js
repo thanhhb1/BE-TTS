@@ -1,13 +1,13 @@
 import express from 'express';
-import routerCategory from './category.js';
-import routerUser from './user.js';
-import routerProduct from './product.js';
-import routerCoupon from './coupon.js';
-import routerReview from './review.js';
-import routerBanner from './banner.js';
-import routerBrand from './brand.js';
-import routerOrder from './order.js';
-import routerAuth from './auth.js';
+import routerCategory from '../modules/category/category.route.js';
+import routerUser from '../modules/user/user.route.js';
+import routerProduct from '../modules/product/product.route.js';
+import routerCoupon from '../modules/coupon/coupon.route.js';
+import routerReview from '../modules/review/review.route.js';
+import routerBanner from '../modules/banner/banner.route.js';
+import routerBrand from '../modules/brand/brand.route.js';
+import routerOrder from '../modules/order/order.route.js';
+import routerAuth from '../modules/user/auth.route.js';
 import routerClient  from './client.js';
 
 

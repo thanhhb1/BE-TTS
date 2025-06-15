@@ -6,8 +6,8 @@ import {
     removeReview,
     restoreReview,
     getDeletedReviews
- } from "../controllers/review.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+ } from "./review.controller.js";
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 const routerReview = express.Router();
 
 routerReview.get("/",authenticate, authorizeRoles("admin", "manage"), getReviews);

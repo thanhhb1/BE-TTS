@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import Order from "../models/Order.js";
-import User from "../models/User.js";  // nhớ import User vì bạn dùng find user
-import ProductVariant from "../models/ProductVariant.js";
+import Order from "./Order.model.js";
+import User from '../user/User.model.js';
+
+
 
 export const getOrders = async (req, res) => {
   try {

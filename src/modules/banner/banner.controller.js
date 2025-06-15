@@ -1,5 +1,5 @@
-import Banner from '../models/Banner.js';
-import { bannerSchema } from '../validation/banner.js';
+import Banner from './Banner.model.js';
+import { bannerSchema } from './banner.validation.js';
 
 export const getBanners = async (req, res) => {
   try {

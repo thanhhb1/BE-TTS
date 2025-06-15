@@ -1,5 +1,5 @@
-import User from "../models/User.js";
-import { userValid,roleValid } from "../validation/user.js";
+import User from '../user/User.model.js';
+import { userValid,roleValid } from "./user.validation.js";
 import bcrypt from "bcrypt";
 
 

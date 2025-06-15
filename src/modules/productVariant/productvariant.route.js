@@ -1,5 +1,5 @@
-import { createVariant, deleteVariant, forceDeleteVariant, getDeletedVariants, getProductVariants, getVariantById, restoreVariant, updateVariant } from "../controllers/productvariant.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+import { createVariant, deleteVariant, forceDeleteVariant, getDeletedVariants, getProductVariants, getVariantById, restoreVariant, updateVariant } from "./productvariant.controller.js";
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 import { Router } from "express";
 
 const routerProduct = Router();

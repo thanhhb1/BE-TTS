@@ -7,8 +7,8 @@ import {
   restoreBanner,
   getDeletedBanners,
   forceDeleteBanner
-} from '../controllers/banner.js';
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+} from './banner.controller.js';
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 const routerBanner = express.Router();
 
 routerBanner.get('/',authenticate, authorizeRoles("admin", "manage"), getBanners); 

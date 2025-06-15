@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import Product from '../models/Product.js';
-import { productSchema } from '../validation/product.js';
+import Product from './Product.model.js';
+import { productSchema } from './product.validation.js';
 
 export const getProducts = async (req, res) => {
   try {

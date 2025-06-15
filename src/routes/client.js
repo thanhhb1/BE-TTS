@@ -1,16 +1,16 @@
 import express from 'express';
-import { getBanners, } from '../controllers/banner.js';
+import { getBanners } from '../modules/banner/banner.controller.js';
 import { 
   getProductDetail,
   getProducts,
   getProductsByCategory,
 
-} from "../controllers/product.js";
-import {addToCart, getCarts,updateCartItem,removeCarts ,removeCartItem} from '../controllers/cart.js';
-import { createUser, getUserDetail, getUsers, updateUser } from '../controllers/user.js';
-import { getCategories, getCategoryById } from '../controllers/category.js';
+} from "../modules/product/product.controller.js";
+import {addToCart, getCarts,updateCartItem,removeCarts ,removeCartItem} from '../modules/cart/cart.controller.js';
+import { createUser, getUserDetail, getUsers, updateUser } from '../modules/user/user.controller.js';
+import { getCategories, getCategoryById } from '../modules/category/category.controller.js';
 import { authenticate, authorizeRoles } from "../middlewares/auth.js";
-import { getProductVariants, getVariantById } from '../controllers/productvariant.js';
+import { getProductVariants, getVariantById } from '../modules/productVariant/productvariant.controller.js';
 const routerClient = express.Router();
 
 routerClient.get('/banners', getBanners); 
@@ -25,10 +25,6 @@ routerClient.get('/categories', getCategories); //Lấy tên danh mục
 routerClient.get('/categories/:id', getCategoryById); //Lấy ID danh mục
 routerClient.get('/products/by-category/:categoryId', getProductsByCategory);  //Lấy sản phẩm theo danh mục
 
-routerClient.get('/carts', authenticate, authorizeRoles("user"), getCarts); 
-routerClient.post('/carts', authenticate, authorizeRoles("user"), addToCart);
-routerClient.put('/carts', authenticate, authorizeRoles("user"), updateCartItem); 
-routerClient.delete('/carts', authenticate, authorizeRoles("user"), removeCarts);
 
 routerClient.get('/carts', authenticate, authorizeRoles("user"), getCarts); 
 routerClient.post('/carts', authenticate, authorizeRoles("user"), addToCart);
