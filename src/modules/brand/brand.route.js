@@ -7,8 +7,8 @@ import {
   removeBrand,
   restoreBrand,
   forceDeleteBrand
-} from '../controllers/brand.js';
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+} from './brand.controller.js';
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 const routerBrand = express.Router();
 
 routerBrand.get('/',authenticate, authorizeRoles("admin", "manage"), getBrands); 

@@ -9,8 +9,8 @@ import {
   restoreCoupon,
   forceDeleteCoupon
   
-} from "../controllers/coupon.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+} from "./coupon.controller.js";
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 const routerCoupon = express.Router();
 
 routerCoupon.get("/",authenticate, authorizeRoles("admin", "manage"), getCoupons);

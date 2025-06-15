@@ -1,5 +1,5 @@
-import Brand from '../models/Brand.js';
-import { brandValid } from '../validation/brand.js';
+import Brand from './Brand.model.js';
+import { brandValid } from './brand.validation.js';
 
 export const getBrands = async (req, res) => {
   try {

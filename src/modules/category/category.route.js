@@ -10,8 +10,8 @@ import {
   forceDeleteCategory,
   
   
-} from "../controllers/category.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+} from "./category.controller.js";
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 const routerCategory = express.Router();
 
 routerCategory.get("/",authenticate, authorizeRoles("admin", "manage"), getCategories);

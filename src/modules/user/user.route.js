@@ -6,8 +6,8 @@ import {
   unHideUser,
   updateUser,
   deleteUser
-} from "../controllers/user.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+} from "./user.controller.js";
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 
 const routerUser = express.Router();
 

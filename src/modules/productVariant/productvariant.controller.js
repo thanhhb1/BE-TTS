@@ -1,8 +1,8 @@
-// controllers/productVariantController.js
+
 import mongoose from 'mongoose';
-import ProductVariant from '../models/ProductVariant.js';
-import { createVariantSchema, updateVariantSchema } from '../validation/productVariant.js';
-import { STATUS_CODES } from '../constant/statusCode.js';
+import ProductVariant from './ProductVariant.model.js';
+import { createVariantSchema, updateVariantSchema } from './productVariant.validation.js';
+import { STATUS_CODES } from '../../constant/statusCode.js';
 
 export const getProductVariants = async (req, res) => {
   try {

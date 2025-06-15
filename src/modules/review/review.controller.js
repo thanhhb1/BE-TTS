@@ -1,5 +1,5 @@
-import Review from "../models/Review.js";
-import { statusValid } from "../validation/review.js";
+import Review from "./Review.model.js";
+import { statusValid } from "./review.validation.js";
 export const getReviews = async (req, res) => {
   try {
     let {

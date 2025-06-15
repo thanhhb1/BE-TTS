@@ -1,5 +1,5 @@
-import Coupon from "../models/Coupon.js";
-import { couponValid } from "../validation/coupon.js";
+import Coupon from "./Coupon.model.js";
+import { couponValid } from "./coupon.validation.js";
 
 export const getCoupons = async (req, res) => {
   try {

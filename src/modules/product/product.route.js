@@ -8,8 +8,8 @@ import {
   getDeletedProducts,
   getProductsByCategory,
   forceDeleteProduct
-} from "../controllers/product.js";
-import { authenticate, authorizeRoles } from "../middlewares/auth.js";
+} from "./product.controller.js";
+import { authenticate, authorizeRoles } from "../../middlewares/auth.js";
 import { Router } from "express";
 
 const routerProduct = Router();
