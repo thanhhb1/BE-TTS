@@ -12,6 +12,7 @@ import routerClient  from './client.js';
 
 
 import { authenticate, authorizeRoles } from '../middlewares/auth.js';
+import routerProductVariant from '../modules/productVariant/productvariant.route.js';
 
 const router = express.Router();
 
@@ -26,6 +27,8 @@ router.use('/admin/reviews',authenticate, authorizeRoles('admin','manage') , rou
 router.use('/admin/banners',authenticate, authorizeRoles('admin','manage') , routerBanner);
 router.use('/admin/brands', authenticate, authorizeRoles('admin','manage') ,routerBrand);
 router.use('/admin/orders', authenticate, authorizeRoles('admin','manage') ,routerOrder);
+router.use('/admin/variants', authenticate, authorizeRoles('admin','manage') , routerProductVariant);
+
 router.use('/client', routerClient);
 
 

@@ -40,7 +40,7 @@ export const addToCart = async (req, res) => {
       const variant = await ProductVariant.findById(variant_id);
       if (!variant) return res.error("Biến thể không tồn tại");
 
-      price = variant.price;
+      price = variant.discount_price;
     }
 
     else {

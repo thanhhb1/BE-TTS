@@ -10,7 +10,7 @@ export const createVariantSchema = Joi.object({
       'string.pattern.base': 'product_id không hợp lệ',
       'any.required': 'product_id là bắt buộc',
     }),
-
+image: Joi.string().uri().required(),
   images: Joi.array()
     .items(Joi.string().uri().required())
     .min(1)
@@ -43,7 +43,8 @@ export const updateVariantSchema = Joi.object({
     .messages({
       'string.pattern.base': 'product_id không hợp lệ',
     }),
-
+    
+  image: Joi.string().uri().optional(),
   images: Joi.array()
     .items(Joi.string().uri().required())
     .messages({

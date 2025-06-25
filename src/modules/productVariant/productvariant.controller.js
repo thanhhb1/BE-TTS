@@ -49,15 +49,15 @@ export const getProductVariants = async (req, res) => {
 };
 
 export const getVariantById = async (req, res) => {
-  const { id } = req.params;
+ const { id } = req.params;
   try {
-    const variant = await ProductVariant.findOne({ _id: id, isDeleted: false }).populate('product_id');
-    if (!variant) {
-      return res.status(STATUS_CODES.OK).json({ message: 'Không tìm thấy biến thể', variant: [] });
+    const variants = await ProductVariant.find({ product_id: id, isDeleted: false }).populate('product_id');
+    if (!variants || variants.length === 0) {
+      return res.status(200).json({ message: 'Không tìm thấy biến thể', variant: [] });
     }
-    res.status(STATUS_CODES.OK).json(variant);
+    res.status(200).json({ message: 'Lấy biến thể thành công', variant: variants });
   } catch (error) {
-    res.status(STATUS_CODES.SERVER_ERROR).json({ message: 'Lỗi server', error: error.message });
+    res.status(500).json({ message: 'Lỗi server', error: error.message });
   }
 };
 
