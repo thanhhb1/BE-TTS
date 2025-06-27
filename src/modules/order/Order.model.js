@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema(
         },
         payment_method: {
             type: String,
-            enum: ["credit_card", "bank_transfer", "cash_on_delivery"],
+            enum: ["vnpay", "cash_on_delivery"],
             required: true,
         },
         payment_status: {
@@ -72,9 +72,18 @@ const orderSchema = new mongoose.Schema(
             city: { type: String },
             country: { type: String },
         },
+        vnp_url: {
+            type: String,
+            default: null,
+        },
+        vnp_expire_at: {
+            type: Date,
+            default: null,
+        },
+    
     },
-    {
-        timestamps: true,
+{
+    timestamps: true,
         versionKey: false,
     }
 );

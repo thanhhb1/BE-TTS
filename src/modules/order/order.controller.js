@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import Order from "./Order.model.js";
+import { createVnpayUrl } from "../../utils/vnpay.js";
+import crypto from "crypto";
+import qs from "qs"
 import User from '../user/User.model.js';
 
 
@@ -205,5 +208,130 @@ export const updateOrderStatus = async (req, res) => {
     );
   } catch (error) {
     return res.error(error.message);
+  }
+};
+
+
+
+
+const generateInvoiceNumber = () => `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+export const createOrder = async (req, res) => {
+  try {
+    const user_id = req.user._id;
+    const { items, shipping_address, payment_method, coupon_id = null, bank_code, language = "vn" } = req.body;
+
+    if (!Array.isArray(items) || items.length === 0 || !shipping_address?.address || !payment_method) {
+      return res.status(400).json({ success: false, message: "Thiếu dữ liệu đơn hàng" });
+    }
+
+    const validMethods = ["cash_on_delivery", "vnpay"];
+    if (!validMethods.includes(payment_method)) {
+      return res.status(400).json({ success: false, message: "Phương thức thanh toán không hợp lệ" });
+    }
+
+    let total_amount = 0;
+    const itemsWithTotal = items.map(item => {
+      const total = item.price * item.quantity;
+      total_amount += total;
+      return {
+        ...item,
+        total_amount: total,
+      };
+    });
+
+    let invoice_number = `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    let order = await Order.create({
+      user_id,
+      items: itemsWithTotal,
+      shipping_address,
+      payment_method,
+      payment_status: "pending",
+      order_status: "pending",
+      invoice_number,
+      total_amount,
+      coupon_id,
+      vnp_expire_at: new Date(Date.now() + 15 * 60000),
+    });
+
+    // Nếu COD
+    if (payment_method === "cash_on_delivery") {
+      return res.status(201).json({
+        success: true,
+        message: "Đơn hàng tạo thành công. Thanh toán khi nhận hàng",
+        data: { order },
+      });
+    }
+
+    // Nếu VNPAY
+    const { paymentUrl, expireDate } = await createVnpayUrl(order, req, bank_code, language);
+    order.vnp_url = paymentUrl;
+    order.vnp_expire_at = expireDate;
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Tạo link thanh toán VNPAY mới thành công",
+      data: {
+        order,
+        redirect_url: paymentUrl,
+      },
+    });
+
+  } catch (err) {
+    console.error("Lỗi tạo đơn hàng:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server khi tạo đơn hàng" });
+  }
+};
+export const handleVnpayIPN = async (req, res) => {
+  try {
+    const vnpParams = req.query;
+    const secureHash = vnpParams.vnp_SecureHash;
+
+    delete vnpParams.vnp_SecureHash;
+    delete vnpParams.vnp_SecureHashType;
+
+    const sortedParams = Object.fromEntries(Object.entries(vnpParams).sort());
+    const signData = qs.stringify(sortedParams, { encode: false });
+
+    const hmac = crypto.createHmac("sha512", process.env.VNP_HASH_SECRET);
+    const checkSum = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+
+    if (secureHash !== checkSum) {
+      return res.status(200).json({ RspCode: "97", Message: "Sai chữ ký" });
+    }
+
+    const invoice_number = vnpParams.vnp_TxnRef;
+    const order = await Order.findOne({ invoice_number });
+
+    if (!order) {
+      return res.status(200).json({ RspCode: "01", Message: "Không tìm thấy đơn hàng" });
+    }
+
+    if ((order.total_amount * 100) !== Number(vnpParams.vnp_Amount)) {
+      return res.status(200).json({ RspCode: "04", Message: "Số tiền không khớp" });
+    }
+
+    if (order.payment_status === "completed") {
+      return res.status(200).json({ RspCode: "00", Message: "Đã thanh toán" });
+    }
+
+    const respCode = vnpParams.vnp_ResponseCode;
+
+    if (respCode === "00") {
+      order.payment_status = "completed";
+      order.order_status = "processing";
+    } else {
+      order.payment_status = "failed";
+      order.order_status = "cancelled";
+    }
+
+    await order.save();
+
+    return res.status(200).json({ RspCode: "00", Message: "Cập nhật đơn hàng thành công" });
+
+  } catch (err) {
+    console.error("Lỗi xử lý IPN:", err);
+    return res.status(200).json({ RspCode: "99", Message: "Lỗi server", error: err.message });
   }
 };
