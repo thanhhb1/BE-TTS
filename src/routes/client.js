@@ -10,7 +10,7 @@ import { addToCart, getCarts, updateCartItem, removeCarts, removeCartItem } from
 import { createUser, getUserDetail, getUsers, updateUser } from '../modules/user/user.controller.js';
 import { getCategories, getCategoryById } from '../modules/category/category.controller.js';
 import { authenticate, authorizeRoles } from "../middlewares/auth.js";
-import {createOrder,handleVnpayIPN} from '../modules/order/order.controller.js';
+import {createOrder,handleVnpayIPN,getUserOrders} from '../modules/order/order.controller.js';
 import { getProductVariants, getVariantById } from '../modules/productVariant/productvariant.controller.js';
 const routerClient = express.Router();
 
@@ -36,6 +36,7 @@ routerClient.delete('/carts/item', authenticate, removeCartItem);
 routerClient.get('/productvariant', authenticate, getProductVariants);
 routerClient.get('/productvariant/:id', authenticate, getVariantById);
 
+routerClient.get("/orders", authenticate, getUserOrders);
 routerClient.post("/orders", authenticate, createOrder);
 routerClient.get("/payment/vnpay/ipn", authenticate, handleVnpayIPN);
 

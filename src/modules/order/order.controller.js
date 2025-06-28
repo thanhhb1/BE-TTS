@@ -78,6 +78,40 @@ export const getOrderById = async (req, res) => {
   }
 };
 
+export const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const {
+      _limit = 10,
+      _page = 1,
+      _sort = "createdAt",
+      _order = "desc"
+    } = req.query;
+
+    const limit = parseInt(_limit);
+    const page = parseInt(_page);
+    const sortOrder = _order === "asc" ? 1 : -1;
+
+    const total = await Order.countDocuments({ user_id: userId });
+    const orders = await Order.find({ user_id: userId })
+      .sort({ [_sort]: sortOrder })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate("items.product_id", "name images")
+      .populate("items.variant_id", "size price");
+
+    return res.success({
+      total,
+      currPage: page,
+      limit,
+      data: orders,
+      hasMore: page * limit < total
+    }, "Lấy danh sách đơn hàng thành công");
+  } catch (error) {
+    return res.error(error.message);
+  }
+};
+
 export const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
