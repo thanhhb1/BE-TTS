@@ -124,7 +124,7 @@ export const updateCartItem = async (req, res) => {
       ? await ProductVariant.findById(variant_id)
       : await Product.findById(product_id);
 
-    const price = variant.price;
+const price = req.body.price ?? variant.discount_price ?? variant.price;
 
     item.quantity = quantity;
     item.subtotal = quantity * price;

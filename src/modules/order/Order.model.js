@@ -40,6 +40,11 @@ const orderSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Coupon",
         },
+        shipping_fee: {
+  type: Number,
+  default: 0,
+},
+
         items: [
             {
                 product_id: {
@@ -71,6 +76,7 @@ const orderSchema = new mongoose.Schema(
             address: { type: String, required: true },
             city: { type: String },
             country: { type: String },
+             phone: { type: String },
         },
         vnp_url: {
             type: String,

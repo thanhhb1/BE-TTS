@@ -63,7 +63,7 @@ export const getOrderById = async (req, res) => {
     const { id } = req.params;
 
     const order = await Order.findById(id)
-      .populate("user_id", "name email")
+      .populate("user_id", "fullname email")
       .populate("coupon_id", "code discount")
       .populate("items.product_id", "name size price image")
       .populate("items.variant_id", "size price image");
@@ -252,7 +252,7 @@ const generateInvoiceNumber = () => `INV-${Date.now()}-${Math.floor(Math.random(
 export const createOrder = async (req, res) => {
   try {
     const user_id = req.user._id;
-    const { items, shipping_address, payment_method, coupon_id = null, bank_code, language = "vn" } = req.body;
+    const { items, shipping_address, payment_method, coupon_id = null, bank_code, language = "vn" , shipping_fee = 0,} = req.body;
 
     if (!Array.isArray(items) || items.length === 0 || !shipping_address?.address || !payment_method) {
       return res.status(400).json({ success: false, message: "Thiếu dữ liệu đơn hàng" });
@@ -272,6 +272,8 @@ export const createOrder = async (req, res) => {
         total_amount: total,
       };
     });
+
+    total_amount += shipping_fee;
 
     let invoice_number = `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
@@ -317,6 +319,7 @@ export const createOrder = async (req, res) => {
     return res.status(500).json({ success: false, message: "Lỗi server khi tạo đơn hàng" });
   }
 };
+
 export const handleVnpayIPN = async (req, res) => {
   try {
     const vnpParams = req.query;
