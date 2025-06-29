@@ -12,6 +12,7 @@ import { getCategories, getCategoryById } from '../modules/category/category.con
 import { authenticate, authorizeRoles } from "../middlewares/auth.js";
 import {createOrder,handleVnpayIPN,getUserOrders} from '../modules/order/order.controller.js';
 import { getProductVariants, getVariantById } from '../modules/productVariant/productvariant.controller.js';
+import { getWishlist, addToWishlist, removeFromWishlist } from '../modules/wishlist/wishlist.controller.js';
 const routerClient = express.Router();
 
 routerClient.get('/banners', getBanners);
@@ -39,6 +40,10 @@ routerClient.get('/productvariant/:id', authenticate, getVariantById);
 routerClient.get("/orders", authenticate, getUserOrders);
 routerClient.post("/orders", authenticate, createOrder);
 routerClient.get("/payment/vnpay/ipn", authenticate, handleVnpayIPN);
+
+routerClient.get("/wishlist", authenticate, getWishlist);
+routerClient.post("/wishlist", authenticate, addToWishlist);
+routerClient.delete("/wishlist", authenticate, removeFromWishlist);
 
 
 export default routerClient;
