@@ -61,12 +61,18 @@ export const getOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id;
 
-    const order = await Order.findById(id)
+    let query = { _id: id };
+    if (userId) {
+      query.user_id = userId;
+    }
+
+    const order = await Order.findOne(query)
       .populate("user_id", "fullname email")
       .populate("coupon_id", "code discount")
-      .populate("items.product_id", "name size price image")
-      .populate("items.variant_id", "size price image");
+      .populate("items.product_id", "name size price images")
+      .populate("items.variant_id", "size price images");
 
     if (!order) {
       return res.error("Không tìm thấy đơn hàng", 404);
@@ -317,6 +323,30 @@ export const createOrder = async (req, res) => {
   } catch (err) {
     console.error("Lỗi tạo đơn hàng:", err);
     return res.status(500).json({ success: false, message: "Lỗi server khi tạo đơn hàng" });
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const order = await Order.findOne({ _id: id, user_id: userId });
+
+    if (!order) {
+      return res.error("Không tìm thấy đơn hàng", 404);
+    }
+
+    if (order.order_status !== 'pending') {
+      return res.error("Chỉ có thể hủy đơn hàng đang chờ xác nhận", 400);
+    }
+
+    order.order_status = 'cancelled';
+    await order.save();
+
+    return res.success(order, "Hủy đơn hàng thành công");
+  } catch (error) {
+    return res.error(error.message);
   }
 };
 

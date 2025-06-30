@@ -203,3 +203,22 @@ export const removeCarts = async (req, res) => {
     return res.error("Lỗi khi xoá nhiều sản phẩm khỏi giỏ hàng");
   }
 };
+
+export const clearCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    const cart = await Cart.findOne({ user_id: userId });
+    if (!cart) {
+      return res.success(null, "Giỏ hàng đã trống");
+    }
+
+    cart.items = [];
+    await cart.save();
+
+    return res.success(cart, "Xóa toàn bộ giỏ hàng thành công");
+  } catch (error) {
+    console.error(error);
+    return res.error("Lỗi khi xóa giỏ hàng");
+  }
+};

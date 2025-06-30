@@ -6,11 +6,11 @@ import {
   getProductsByCategory,
 
 } from "../modules/product/product.controller.js";
-import { addToCart, getCarts, updateCartItem, removeCarts, removeCartItem } from '../modules/cart/cart.controller.js';
+import { addToCart, getCarts, updateCartItem, removeCarts, removeCartItem, clearCart } from '../modules/cart/cart.controller.js';
 import { createUser, getUserDetail, getUsers, updateUser } from '../modules/user/user.controller.js';
 import { getCategories, getCategoryById } from '../modules/category/category.controller.js';
 import { authenticate, authorizeRoles } from "../middlewares/auth.js";
-import {createOrder,handleVnpayIPN,getUserOrders} from '../modules/order/order.controller.js';
+import {createOrder,handleVnpayIPN,getUserOrders,getOrderById,cancelOrder} from '../modules/order/order.controller.js';
 import { getProductVariants, getVariantById } from '../modules/productVariant/productvariant.controller.js';
 import { getWishlist, addToWishlist, removeFromWishlist } from '../modules/wishlist/wishlist.controller.js';
 const routerClient = express.Router();
@@ -32,12 +32,15 @@ routerClient.get('/carts', authenticate, getCarts);
 routerClient.post('/carts', authenticate, addToCart);
 routerClient.put('/carts', authenticate, updateCartItem);
 routerClient.delete('/carts', authenticate, removeCarts);
+routerClient.delete('/carts/clear', authenticate, clearCart);
 routerClient.delete('/carts/item', authenticate, removeCartItem);
 
 routerClient.get('/productvariant', authenticate, getProductVariants);
 routerClient.get('/productvariant/:id', authenticate, getVariantById);
 
 routerClient.get("/orders", authenticate, getUserOrders);
+routerClient.get("/orders/:id", authenticate, getOrderById);
+routerClient.patch("/orders/:id/cancel", authenticate, cancelOrder);
 routerClient.post("/orders", authenticate, createOrder);
 routerClient.get("/payment/vnpay/ipn", authenticate, handleVnpayIPN);
 
